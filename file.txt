@@ -1,0 +1,6 @@
+criar tabela users
+
+
+id
+name
+password

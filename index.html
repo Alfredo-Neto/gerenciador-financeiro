@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Document</title>
+</head>
+<body>
+    <form id="form" action="index.php" method="post">
+        <div class="imgcontainer">
+          <img src="/images/img_avatar2.png" alt="Avatar" class="avatar">
+        </div>
+      
+        <div class="container">
+          <label for="username"><b>Username</b></label>
+          <input type="text" placeholder="Enter Username" name="username" required>
+      
+          <label for="password"><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" name="password" required>
+      
+          <button type="submit">Login</button>
+          <label>
+            <input type="checkbox" checked="checked" name="remember"> Remember me
+          </label>
+        </div>
+      
+        <div class="container" style="background-color:#f1f1f1">
+          <button type="button" class="cancelbtn">Cancel</button>
+          <span class="psw">Forgot <a href="#">password?</a></span>
+        </div>
+
+        <!-- <div class="container" style="background-color:#f1f1f1">
+            <button type="button" onclick="register()" class="cancelbtn">Register</button>
+            <button type="button" onclick="pudim()" class="cancelbtn">Pudim</button>
+        </div> -->
+      </form>
+    
+
+      <script>
+        const form = document.getElementById('form') ;
+        let objetoJS = null;
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            arrDados = {};
+            for (const pair of formData) {
+                arrDados[pair[0]] = pair[1];
+            }
+            const meuJson = JSON.stringify(arrDados); //json é string
+            
+            fetch('http://localhost:8000/login', {
+                method: 'post',
+                body: meuJson
+            })
+            .then((response) => response.text()) 
+            .then((text) => {
+                try {
+                    objetoJS = JSON.parse(text);
+                    console.log('objetoJS', objetoJS);
+                } catch (error) {
+                    console.log(error);
+                }
+            })
+            .catch((error) => console.log(error));
+        });
+
+        // const register = () => {
+        //     fetch('http://localhost:8000/register', {
+        //         method: 'post',
+        //         body: null
+        //     })
+        //     .then((response) => response.text()) 
+        //     .then((text) => console.log(text))
+        //     .catch((error) => console.log(error));
+        // };
+
+        // const pudim = () => {
+        //     fetch('http://localhost:8000/pudim', {
+        //         method: 'get',
+        //         body: null
+        //     })
+        //     .then((response) => response.text()) 
+        //     .then((text) => console.log(text))
+        //     .catch((error) => console.log(error));
+        // };
+      </script>
+</body>
+</html>

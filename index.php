@@ -1,36 +1,58 @@
-<?php 
+<?php
+require_once 'controller/AuthController.php';
+require_once 'lib/JsonResponse.php';
+
+function instanciaClasse( $nomeDaClasse )
+{
+   return new $nomeDaClasse();
+}
+
+function executaMetodo($objeto, $nomeDoMetodo, $parametros = []) {
+    return $objeto->{$nomeDoMetodo}(...$parametros);
+}
+
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: *");
 
 $method = $_SERVER["REQUEST_METHOD"];
 $uri = $_SERVER["REQUEST_URI"];
-
-
-$uri = str_replace("/", "", $uri, $count = 1);
+$count = 1;
+// $uri = str_replace("/", "", $uri, $count);
 
 $rotas = [];
-$rotas["POST"]["login"] = "postLogin";
-$rotas["POST"]["register"] = "postRegister";
+$rotas["POST"]["/login"] = ['AuthController', "login"];
+$rotas["POST"]["/register"] = ['AuthController', "register"];
+$rotas["POST"]["/pudim"] = ['AuthController', "pudim"];
 
-echo '<pre>';
-var_export($rotas);
-echo '</pre>';
+// $rotas = {
+//     'POST' : {
+//         'login' : {
+//             0 : 'AuthController',
+//             1 : "login"
+//         },
+//         'register' : {
+//             0 : 'AuthController',
+//             1 : "register"
+//         }
+//     }
+// };
 
-var_export($rotas[$method]);
+$request = json_decode(file_get_contents('php://input')); //raw body
 
-echo($method);
-echo($uri);
-
-if (isset($rotas[$method]))
+$response = null;
+if (isset($rotas[$method][$uri])) // se método que vier do server existir e se método e o recurso que vier do server existirem
 {
-    if (isset($rotas[$method][$uri]))
-    {
-        $rotas[$method][$uri]();
-    }
+    $meuController = instanciaClasse($rotas[$method][$uri][0]); //instanciei controller
+    $response = executaMetodo($meuController, $rotas[$method][$uri][1], [$request]); //chamei funcao (passo o array global request que contem dados GET e POST)
+} else {
+    $response = new JsonResponse([],404); //not found
 }
 
-function postLogin (){
-    echo($_POST["username"]);
-    echo($_POST["password"]);
-}
-
+echo $response->process();
 // A função acima vai exibir o que eu enviar no input com o name == username e com name == password
-// utilizar objeto form do JavaScript (olhar MDN/W3Schools)
+
+
+
+// Perguntas:
+// Os dados que vêm em $_SERVER["REQUEST_METHOD"] e $_SERVER["REQUEST_URI"] são do usuário ou do servidor?
+
