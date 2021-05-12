@@ -1,6 +1,9 @@
 <?php
+//  phpinfo();
+// exit();
 require_once 'controller/AuthController.php';
 require_once 'lib/JsonResponse.php';
+require_once 'database/DbConnectionFactory.php';
 
 function instanciaClasse( $nomeDaClasse )
 {
@@ -8,7 +11,7 @@ function instanciaClasse( $nomeDaClasse )
 }
 
 function executaMetodo($objeto, $nomeDoMetodo, $parametros = []) {
-    return $objeto->{$nomeDoMetodo}(...$parametros);
+    return $objeto->{$nomeDoMetodo}(...$parametros); //meuController->{login}($request)
 }
 
 header("Access-Control-Allow-Origin: *");
@@ -17,7 +20,6 @@ header("Access-Control-Allow-Headers: *");
 $method = $_SERVER["REQUEST_METHOD"];
 $uri = $_SERVER["REQUEST_URI"];
 $count = 1;
-// $uri = str_replace("/", "", $uri, $count);
 
 $rotas = [];
 $rotas["POST"]["/login"] = ['AuthController', "login"];
@@ -36,6 +38,7 @@ $rotas["POST"]["/pudim"] = ['AuthController', "pudim"];
 //         }
 //     }
 // };
+
 
 $request = json_decode(file_get_contents('php://input')); //raw body
 

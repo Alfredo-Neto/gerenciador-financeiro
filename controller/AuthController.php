@@ -1,7 +1,5 @@
 <?php
 
-require_once 'lib/JsonResponse.php';
-
 class AuthController
 {
     private $cadastros = [
@@ -30,12 +28,27 @@ class AuthController
 
     public function register($request)
     {
-        return new JsonResponse (['frase' => 'você chamou register! registrando usuario!'],200);
-    }
+        try {
+            $name = $request->username;
+            $password = $request->password;
 
-    public function pudim($request)
-    {
-        return new JsonResponse (['frase' => '🍮🍮🍮'],200);
+            $pdo = DbConnectionFactory::get();
+            $sql = "INSERT INTO Usuarios (name, password)
+            VALUES ('$name', '$password')";
+            $result = $pdo->query( $sql );
+
+            $mensagem = '';
+            if($result == true) {
+                $mensagem = 'foi!';
+            } else {
+                $mensagem = 'deu pau';
+            }
+
+            // $rows = $result->fetchAll();
+            return new JsonResponse (['mensagem' => $mensagem], 201);
+        } catch (Exception $e) {
+            return new JsonResponse (['mensagem' => $e->getMessage()],500);
+        }
     }
 }
 

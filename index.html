@@ -27,7 +27,7 @@
         </div>
       
         <div class="container" style="background-color:#f1f1f1">
-          <button type="button" class="cancelbtn">Cancel</button>
+          <button type="button" onclick="register()" class="register">Register</button>
           <span class="psw">Forgot <a href="#">password?</a></span>
         </div>
 
@@ -38,11 +38,13 @@
       </form>
     
 
-      <script>
+    <script>
         const form = document.getElementById('form') ;
-        let objetoJS = null;
+
         form.addEventListener('submit', (e) => {
             e.preventDefault();
+
+            let objetoJS = null;
 
             const formData = new FormData(form);
             arrDados = {};
@@ -67,15 +69,23 @@
             .catch((error) => console.log(error));
         });
 
-        // const register = () => {
-        //     fetch('http://localhost:8000/register', {
-        //         method: 'post',
-        //         body: null
-        //     })
-        //     .then((response) => response.text()) 
-        //     .then((text) => console.log(text))
-        //     .catch((error) => console.log(error));
-        // };
+        const register = () => {
+
+            const formData = new FormData(form);
+            arrDados = {};
+            for (const pair of formData) {
+                arrDados[pair[0]] = pair[1];
+            }
+            const meuJson = JSON.stringify(arrDados); //json é string
+
+            fetch('http://localhost:8000/register', {
+                method: 'post',
+                body: meuJson
+            })
+            .then((response) => response.text()) 
+            .then((text) => console.log(text))
+            .catch((error) => console.log(error));
+        };
 
         // const pudim = () => {
         //     fetch('http://localhost:8000/pudim', {
@@ -86,6 +96,6 @@
         //     .then((text) => console.log(text))
         //     .catch((error) => console.log(error));
         // };
-      </script>
+    </script>
 </body>
 </html>

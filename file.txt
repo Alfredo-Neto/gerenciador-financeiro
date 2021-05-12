@@ -1,6 +1,23 @@
-criar tabela users
 
 
-id
-name
-password
+tarefa para amanhã
+fazer uma page de register (semelhante a essa do login), que vai disparar a request e, caso registre com sucesso, deverá exibir uma mensagem.
+se der tempo: testar também com nome repetido para ver o que acontece.
+
+
+
+
+
+lista de TAREFAS PARA O FUTURO - mini frame de php de rua
+
+separar operações banco de dados
+usar o bindvalue
+
+validação dos dados enviados
+put e delete
+fazer migration
+fazer create automatizado
+botar o compser e deixar de usar require
+fazer sanitize no input
+fazer um active record tmb
+fazer um framework de teste
