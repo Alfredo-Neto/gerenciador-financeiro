@@ -2,20 +2,21 @@
 
  class DbConnectionFactory {
     private static $host = 'localhost';
-    private static $user = 'root';
-    private static $password = 'colossos934';
+    private static $user = 'postgres';
+    private static $password = '123456';
     private static $name = 'gerenciador_financeiro';
+    private static $port = '5432';
+
 
     public static function get() {
-        try
-        {
-            $pdo = new PDO( 'mysql:host=' . self::$host . ';dbname=' . self::$name, self::$user, self::$password);
+        
+            $pdo = new PDO( 
+            'pgsql:host=' 
+            . self::$host 
+            . ';port=' . self::$port . ';dbname=' . self::$name . ';user=' 
+            . self::$user . ';password=' . self::$password);
+
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $pdo;
-        }
-        catch ( PDOException $e )
-        {
-            echo 'Erro ao conectar com o MySQL: ' . $e->getMessage();
-        }
     }
 }

@@ -1,19 +1,25 @@
 
 
 tarefa para amanhã
-fazer uma page de register (semelhante a essa do login), que vai disparar a request e, caso registre com sucesso, deverá exibir uma mensagem.
+fazer uma page de register (semelhante a essa do login), que vai disparar a request e, 
+caso registre com sucesso, deverá exibir uma mensagem.
 se der tempo: testar também com nome repetido para ver o que acontece.
 
 
 
-
+LOGIN E GERENCIADOR FINANCEIRO
+register:
+    ok - tela de register
+    ok - rota de register
+    ok - validações de register
+    aviso na tela caso derro e também sucesso.
 
 lista de TAREFAS PARA O FUTURO - mini frame de php de rua
 
 separar operações banco de dados
-usar o bindvalue
-
-validação dos dados enviados
+OK - usar o bindvalue
+OK - validação dos dados enviados
+modularizar a validação dos dados enviados
 put e delete
 fazer migration
 fazer create automatizado

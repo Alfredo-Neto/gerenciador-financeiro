@@ -68,25 +68,6 @@
             })
             .catch((error) => console.log(error));
         });
-
-        const register = () => {
-
-            const formData = new FormData(form);
-            arrDados = {};
-            for (const pair of formData) {
-                arrDados[pair[0]] = pair[1];
-            }
-            const meuJson = JSON.stringify(arrDados); //json é string
-
-            fetch('http://localhost:8000/register', {
-                method: 'post',
-                body: meuJson
-            })
-            .then((response) => response.text()) 
-            .then((text) => console.log(text))
-            .catch((error) => console.log(error));
-        };
-
         // const pudim = () => {
         //     fetch('http://localhost:8000/pudim', {
         //         method: 'get',

@@ -1,6 +1,6 @@
 <?php
-//  phpinfo();
-// exit();
+//   phpinfo();
+//  exit();
 require_once 'controller/AuthController.php';
 require_once 'lib/JsonResponse.php';
 require_once 'database/DbConnectionFactory.php';
