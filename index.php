@@ -1,5 +1,5 @@
 <?php
-//   phpinfo();
+//   phpinfo();$(subst .c,.o,$(SRC_BONUS))
 //  exit();
 require_once 'controller/AuthController.php';
 require_once 'lib/JsonResponse.php';

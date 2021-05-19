@@ -16,6 +16,7 @@ register:
 
 lista de TAREFAS PARA O FUTURO - mini frame de php de rua
 
+criptografar senha
 separar operações banco de dados
 OK - usar o bindvalue
 OK - validação dos dados enviados

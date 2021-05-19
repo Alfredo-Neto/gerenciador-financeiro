@@ -2,28 +2,34 @@
 
 class AuthController
 {
-    private $cadastros = [
-        'alfredo' => '123456',
-        'rui' => '321654',
-    ];
-
-    private function checkLogin ($username, $password)
-    {
-        if( isset( $this->cadastros[$username] ) ) { //se o login existe no array
-            if ($this->cadastros[$username] == $password) { // se a senha é igual ao valor daquele login no array
-                return true;
-            }
-        }
-        return false;
-    }
-
     public function login($request)
     {
-        if($this->checkLogin($request->username, $request->password)) { // se a verificação do login for verdadeira
-            return new JsonResponse (['token' => '123456'],200);
-        } else {
-            return new JsonResponse ([],401);
+        try {
+
+            if (!property_exists($request, 'username') && !property_exists($request, 'password') 
+            || $request->username == '' || $request->username == null
+            || $request->password == '' || $request->password == null )
+            {
+                throw new Exception("Campos precisam ser preenchidos");
+            }
+            
+          $pdo = DbConnectionFactory::get();
+          $sql = "SELECT * FROM Usuarios";
+            $statement = $pdo->prepare($sql);
+            $statement->execute();
+            $numRowsUsersSameName = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+          return new JsonResponse (['mensagem' => $numRowsUsersSameName], 200);
+          
+        } catch (Exception $e) {
+            return new JsonResponse (['mensagem' => $e->getMessage()],500);
         }
+        
+        // if($this->checkLogin($request->username, $request->password)) { // se a verificação do login for verdadeira
+        //     return new JsonResponse (['token' => '123456'],200);
+        // } else {
+        //     return new JsonResponse ([],401);
+        // }
     }
 
     public function register($request)
@@ -63,11 +69,13 @@ class AuthController
                 throw new Exception("User already signed up.", 1);
             }
 
+            $passwordHash = password_hash ($password, PASSWORD_DEFAULT);
+
             $sql = "INSERT INTO Usuarios (name, password)
             VALUES (:username, :password)";
             $statement = $pdo->prepare($sql);
             $statement->bindValue(':username', $username);
-            $statement->bindValue(':password', $password);
+            $statement->bindValue(':password', $passwordHash);
             $result = $statement->execute();
 
             $mensagem = '';
