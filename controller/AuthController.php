@@ -2,6 +2,66 @@
 
 class AuthController
 {
+
+    private $delimitador = '9416485941';
+    private $qtdTempoToken = 10;
+
+    private function makeAWT($nome,$id){
+        $data = new Datetime();
+        $data->add(new DateInterval('PT' . $this->qtdTempoToken . 'S'));
+        $dataFormatada = $data->format('Y-m-d H:i:s');
+
+        $token_awt = $this->delimitador . $nome . $this->delimitador . $id . $this->delimitador . $dataFormatada . $this->delimitador;
+        $token_awt = base64_encode($token_awt);
+        return $token_awt;
+    }
+
+    private function decodeAWT($token_awt){
+        $token_awt = base64_decode($token_awt);
+        $arrayDados = explode($this->delimitador, $token_awt);
+        return $arrayDados;
+    }
+
+    private function validateAWT($token_awt){
+        $arrayDados = $this->decodeAWT($token_awt);
+
+        $dataAtual = new Datetime();
+        $dataToken = new Datetime($arrayDados[3]);
+        $interval = $dataAtual->diff($dataToken);
+        // $dadosRetorno = [
+        //     'atual' => $dataAtual->format('Y-m-d H:i:s'),
+        //     'token' => $dataToken->format('Y-m-d H:i:s'),
+        //     'resultado' => $interval->invert, //se 1, negativo
+        //     'resultado' => $interval->format('s'),
+        // ];
+
+        $resultado = $dataAtual->getTimestamp() - $dataToken->getTimestamp();
+        if($resultado >= 0){
+            throw new Exception("Seu token não é mais valido! Favor Relogar!", 1);
+        }
+
+        return true;
+    }
+
+    public function testeToken($request)
+    {
+        try {
+
+            if(!property_exists($request, 'token_awt') || $request->token_awt == null 
+            || $request->token_awt == ''){
+                throw new Exception("Please inform token_awt field.", 1);
+            }
+    
+            $this->validateAWT($request->token_awt);
+
+            return new JsonResponse (['mensagem' => 'seu token é valido, pode fazer usa operação'], 200);
+
+        } catch (Exception $e) {
+            // Seu token não é mais valido! Favor Relogar! //vamos criar uma forma de especificar esse erro!!
+            return new JsonResponse (['mensagem' => $e->getMessage()], 500);
+        }
+    }
+
     public function login($request)
     {
         try {
@@ -29,7 +89,10 @@ class AuthController
 
             // Vamos criar um hash que significa que o usuario está autenticado e até que horas ele está autenticado
 
-            return new JsonResponse (['mensagem' => $usuariosEncontrados], 200);
+            $token_awt = $this->makeAWT($usuariosEncontrados[0]['name'],$usuariosEncontrados[0]['id']);
+            // $desembaralhado = $this->decodeAWT($embaralhado);
+
+            return new JsonResponse (['token_awt' => $token_awt], 200);
             
         } catch (Exception $e) {
             return new JsonResponse (['mensagem' => $e->getMessage()], 500);
@@ -90,9 +153,9 @@ class AuthController
 
             $mensagem = '';
             if($result == true) {
-                $mensagem = 'foi!';
+                $mensagem = 'Cadastrado com sucesso!';
             } else {
-                $mensagem = 'deu pau';
+                $mensagem = 'Erro no cadastro! Verifique seu email!';
             }
 
             // $rows = $result->fetchAll();

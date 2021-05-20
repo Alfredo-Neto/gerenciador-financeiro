@@ -24,7 +24,7 @@ $count = 1;
 $rotas = [];
 $rotas["POST"]["/login"] = ['AuthController', "login"];
 $rotas["POST"]["/register"] = ['AuthController', "register"];
-$rotas["POST"]["/pudim"] = ['AuthController', "pudim"];
+$rotas["POST"]["/testeToken"] = ['AuthController', "testeToken"];
 
 // $rotas = {
 //     'POST' : {
