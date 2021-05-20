@@ -6,25 +6,35 @@ class AuthController
     {
         try {
 
-            if (!property_exists($request, 'username') && !property_exists($request, 'password') 
+            if (!property_exists($request, 'username') && !property_exists($request, 'password')
             || $request->username == '' || $request->username == null
             || $request->password == '' || $request->password == null )
             {
                 throw new Exception("Campos precisam ser preenchidos");
             }
-            
-          $pdo = DbConnectionFactory::get();
-          $sql = "SELECT * FROM Usuarios";
+                
+            $pdo = DbConnectionFactory::get();
+            $sql = "SELECT * FROM Usuarios where name like '$request->username'";
             $statement = $pdo->prepare($sql);
             $statement->execute();
-            $numRowsUsersSameName = $statement->fetchAll(PDO::FETCH_ASSOC);
+            $usuariosEncontrados = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-          return new JsonResponse (['mensagem' => $numRowsUsersSameName], 200);
-          
+            if (empty($usuariosEncontrados)) {
+                throw new Exception("Usuário não encontrado");
+            }
+
+            if (!password_verify ($request->password , $usuariosEncontrados[0]['password'])) {
+                throw new Exception("Senha incorreta");
+            }
+
+            // Vamos criar um hash que significa que o usuario está autenticado e até que horas ele está autenticado
+
+            return new JsonResponse (['mensagem' => $usuariosEncontrados], 200);
+            
         } catch (Exception $e) {
-            return new JsonResponse (['mensagem' => $e->getMessage()],500);
+            return new JsonResponse (['mensagem' => $e->getMessage()], 500);
         }
-        
+
         // if($this->checkLogin($request->username, $request->password)) { // se a verificação do login for verdadeira
         //     return new JsonResponse (['token' => '123456'],200);
         // } else {
@@ -69,7 +79,7 @@ class AuthController
                 throw new Exception("User already signed up.", 1);
             }
 
-            $passwordHash = password_hash ($password, PASSWORD_DEFAULT);
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
             $sql = "INSERT INTO Usuarios (name, password)
             VALUES (:username, :password)";

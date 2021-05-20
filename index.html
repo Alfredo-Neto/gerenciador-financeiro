@@ -60,10 +60,11 @@
             .then((response) => response.text()) 
             .then((text) => {
                 try {
+                    console.log('antes de converter', text);
                     objetoJS = JSON.parse(text);
                     console.log('objetoJS', objetoJS);
                 } catch (error) {
-                    console.log(error);
+                    console.error(error);
                 }
             })
             .catch((error) => console.log(error));
