@@ -51,6 +51,7 @@ if (isset($rotas[$method][$uri])) // se método que vier do server existir e se 
     $response = new JsonResponse([],404); //not found
 }
 
+
 echo $response->process();
 // A função acima vai exibir o que eu enviar no input com o name == username e com name == password
 

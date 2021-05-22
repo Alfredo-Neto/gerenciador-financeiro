@@ -49,7 +49,7 @@
 
             let token_awt = window.localStorage.getItem('token_awt');
 
-            const dadosParaEnviar = {'token_awt': token_awt};
+            const dadosParaEnviar = {'token_awt': token_awt}; //mentira
 
             const meuJson = JSON.stringify(dadosParaEnviar);
 
@@ -60,9 +60,16 @@
             .then((response) => response.text()) 
             .then((text) => {
                 try {
-                    console.log('antes de converter', text);
+                    console.log('DEBUG antes de converter de json para objeto real', text);
                     objetoJS = JSON.parse(text);
-                    console.log('objetoJS', objetoJS);
+                    console.log('DEBUG objetoJS', objetoJS);
+
+                    if(response.ok) {
+                        alert('DEU CERTO!');
+                    } else {
+                        alert('erro! '+objetoJS.data.mensagem)
+                    }
+
                 } catch (error) {
                     console.error(error);
                 }
@@ -86,31 +93,38 @@
                 method: 'post',
                 body: meuJson
             })
-            .then((response) => response.text()) 
-            .then((text) => {
+            .then(async (response) => {
+                const text = await response.text();
                 try {
-                    console.log('antes de converter', text);
-                    objetoJS = JSON.parse(text);
-                    console.log('objetoJS', objetoJS);
+                    console.log('DEBUG antes de converter', text);
+                    objetoJS = JSON.parse(text); // JSON parse (json-text => javascript-obj) stringfy (javascript-obj => json-text)
+                    console.log('DEBUG objetoJS', objetoJS);
 
-                    window.localStorage.setItem('token_awt',objetoJS.data.token_awt);
-                    console.log(window.localStorage.getItem('token_awt'));
+                    if(response.ok) {
+                        alert('Login feito com sucesso!');
+                        window.localStorage.setItem('token_awt', objetoJS.data.token_awt); //armazenandoo sua sessao aqui no front
+
+                        // sumir com a tela de login e mostrar uma lista de "contas" (conta bancaria, cartão de credito, dinheiro fisico, cofrinhos)
+                        //transição de tela - framework (router) // front
+                        /**
+                         * negocio - fazer uma request para pegar as contas existentes do usuario
+                         * criar tabela contas // banco
+                         * fazer o endpoint api pra listar contas // back
+                         * botão pra inserir conta // front
+                         * modal para cadastrar conta // front
+                         * recarregar a lista de contas // front
+                         * */
+
+                    } else {
+                        alert(objetoJS.data.mensagem);
+                    }
 
                 } catch (error) {
                     console.error(error);
                 }
-            })
+            }) 
             .catch((error) => console.log(error));
         });
-        // const pudim = () => {
-        //     fetch('http://localhost:8000/pudim', {
-        //         method: 'get',
-        //         body: null
-        //     })
-        //     .then((response) => response.text()) 
-        //     .then((text) => console.log(text))
-        //     .catch((error) => console.log(error));
-        // };
     </script>
 </body>
 </html>

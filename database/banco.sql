@@ -6,7 +6,7 @@ use gerenciador_financeiro;
 
 CREATE TABLE Usuarios ( 
     ID serial NOT NULL UNIQUE, 
-    name varchar(255) NOT NULL UNIQUE, 
+    name varchar(255) NOT NULL UNIQUE,
     password varchar(255),
     CONSTRAINT PK_Usuarios PRIMARY KEY (ID)
 );

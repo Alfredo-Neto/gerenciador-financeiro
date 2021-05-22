@@ -11,6 +11,16 @@ class JsonResponse //implements Response
         $this->code = $code;
     }
 
+    public function process()
+    {
+        http_response_code($this->code); //https://www.php.net/manual/pt_BR/function.http-response-code.php
+        return json_encode([
+            'code' => $this->code, // FINS DE DEBUG
+            'codeString' => $this->processCode(),  // FINS DE DEBUG
+            'data' => $this->data
+        ]);
+    }
+
     private function processCode()
     {
         switch ($this->code) {
@@ -42,13 +52,5 @@ class JsonResponse //implements Response
                 throw new Exception("HTTP error code not supported", 1);
                 break;
         }
-    }
-
-    public function process()
-    {
-        return json_encode([
-            'message' => $this->processCode(),
-            'data' => $this->data
-        ]);
     }
 }

@@ -17,8 +17,8 @@ class AuthController
     }
 
     private function decodeAWT($token_awt){
-        $token_awt = base64_decode($token_awt);
-        $arrayDados = explode($this->delimitador, $token_awt);
+        $decoded_token = base64_decode($token_awt);
+        $arrayDados = explode($this->delimitador, $decoded_token);
         return $arrayDados;
     }
 
@@ -27,16 +27,9 @@ class AuthController
 
         $dataAtual = new Datetime();
         $dataToken = new Datetime($arrayDados[3]);
-        $interval = $dataAtual->diff($dataToken);
-        // $dadosRetorno = [
-        //     'atual' => $dataAtual->format('Y-m-d H:i:s'),
-        //     'token' => $dataToken->format('Y-m-d H:i:s'),
-        //     'resultado' => $interval->invert, //se 1, negativo
-        //     'resultado' => $interval->format('s'),
-        // ];
 
-        $resultado = $dataAtual->getTimestamp() - $dataToken->getTimestamp();
-        if($resultado >= 0){
+        $resultado = $dataToken->getTimestamp() - $dataAtual->getTimestamp();
+        if($resultado <= 0){
             throw new Exception("Seu token não é mais valido! Favor Relogar!", 1);
         }
 
@@ -54,7 +47,7 @@ class AuthController
     
             $this->validateAWT($request->token_awt);
 
-            return new JsonResponse (['mensagem' => 'seu token é valido, pode fazer usa operação'], 200);
+            return new JsonResponse (['mensagem' => 'seu token é valido, pode fazer sua operação'], 200);
 
         } catch (Exception $e) {
             // Seu token não é mais valido! Favor Relogar! //vamos criar uma forma de especificar esse erro!!
@@ -77,20 +70,20 @@ class AuthController
             $sql = "SELECT * FROM Usuarios where name like '$request->username'";
             $statement = $pdo->prepare($sql);
             $statement->execute();
-            $usuariosEncontrados = $statement->fetchAll(PDO::FETCH_ASSOC);
+            $usuariosEncontrados = $statement->fetch(PDO::FETCH_ASSOC); //fetchall retorna um array // fetch retorna um usuario só
 
             if (empty($usuariosEncontrados)) {
                 throw new Exception("Usuário não encontrado");
             }
 
-            if (!password_verify ($request->password , $usuariosEncontrados[0]['password'])) {
+            if (!password_verify ($request->password , $usuariosEncontrados['password'])) {
                 throw new Exception("Senha incorreta");
             }
 
-            // Vamos criar um hash que significa que o usuario está autenticado e até que horas ele está autenticado
-
-            $token_awt = $this->makeAWT($usuariosEncontrados[0]['name'],$usuariosEncontrados[0]['id']);
-            // $desembaralhado = $this->decodeAWT($embaralhado);
+            $token_awt = $this->makeAWT(
+                $usuariosEncontrados['name'],
+                $usuariosEncontrados['id']
+            );
 
             return new JsonResponse (['token_awt' => $token_awt], 200);
             
@@ -98,11 +91,6 @@ class AuthController
             return new JsonResponse (['mensagem' => $e->getMessage()], 500);
         }
 
-        // if($this->checkLogin($request->username, $request->password)) { // se a verificação do login for verdadeira
-        //     return new JsonResponse (['token' => '123456'],200);
-        // } else {
-        //     return new JsonResponse ([],401);
-        // }
     }
 
     public function register($request)
@@ -158,7 +146,6 @@ class AuthController
                 $mensagem = 'Erro no cadastro! Verifique seu email!';
             }
 
-            // $rows = $result->fetchAll();
             return new JsonResponse (['mensagem' => $mensagem], 201);
         } catch (Exception $e) {
             return new JsonResponse (['mensagem' => $e->getMessage()],500);
