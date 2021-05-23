@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>CONTAS</h1>
+    
+    <div id="divListaContas">
+
+    </div>
+
+
+    <script>
+
+        const listarContas = () => {
+
+            /**
+            * botão pra inserir conta // front
+            * modal para cadastrar conta // front
+            * recarregar a lista de contas // front
+            * brasue JS alfredo hue hue hue hue o rui hue junto
+            * RueJS - framework do hadouken
+            * */
+        
+            fetch('http://localhost:8000/contas', {
+                method: 'get',
+                body: null
+            })
+            .then(async (response) => {
+                const text = await response.text();
+                try {
+                    console.log('DEBUG dados antes converter', text);
+                    objetoJS = JSON.parse(text);
+                    console.log('DEBUG objetoJS', objetoJS); // TEM QUE APARECER AS CONTAS
+
+                    if(response.ok) {
+                        // alert('DEU CERTO!');
+                        renderListaContas(objetoJS.data.contas)
+                    } else {
+                        alert('erro! ' + objetoJS.data.mensagem)
+                    }
+
+                } catch (error) {
+                    console.error(error);
+                }
+            }) 
+            .catch((error) => console.log(error));
+        };
+
+
+        function renderListaContas (listaContas) {
+            let divListaContas = document.getElementById('divListaContas');
+            let html = '';
+            listaContas.forEach(conta => {
+                html += `<p>${conta.id}|${conta.nome}|${conta.saldo}</p>`;
+            });
+            divListaContas.innerHTML = html;
+        }
+
+        listarContas();
+
+    </script>
+</body>
+</html>

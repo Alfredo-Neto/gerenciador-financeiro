@@ -103,17 +103,7 @@
                     if(response.ok) {
                         alert('Login feito com sucesso!');
                         window.localStorage.setItem('token_awt', objetoJS.data.token_awt); //armazenandoo sua sessao aqui no front
-
-                        // sumir com a tela de login e mostrar uma lista de "contas" (conta bancaria, cartão de credito, dinheiro fisico, cofrinhos)
-                        //transição de tela - framework (router) // front
-                        /**
-                         * negocio - fazer uma request para pegar as contas existentes do usuario
-                         * criar tabela contas // banco
-                         * fazer o endpoint api pra listar contas // back
-                         * botão pra inserir conta // front
-                         * modal para cadastrar conta // front
-                         * recarregar a lista de contas // front
-                         * */
+                        window.location.href = "contas.html";
 
                     } else {
                         alert(objetoJS.data.mensagem);
