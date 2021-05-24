@@ -8,4 +8,36 @@ LINE 1: SELECT * FROM Contass
 LINE 1: SELECT * FROM Contass
                       ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
 LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
+                      ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
+LINE 1: SELECT * FROM Contass
                       ^\n

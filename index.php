@@ -1,5 +1,5 @@
 <?php
-//   phpinfo();$(subst .c,.o,$(SRC_BONUS))
+//   phpinfo()
 //  exit();
 require_once 'controller/AuthController.php';
 require_once 'controller/ContasController.php';

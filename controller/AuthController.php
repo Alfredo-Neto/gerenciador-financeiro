@@ -72,6 +72,7 @@ class AuthController
             $statement->execute();
             $usuariosEncontrados = $statement->fetch(PDO::FETCH_ASSOC); //fetchall retorna um array // fetch retorna um usuario só
 
+
             if (empty($usuariosEncontrados)) {
                 throw new Exception("Usuário não encontrado");
             }
@@ -79,6 +80,17 @@ class AuthController
             if (!password_verify ($request->password , $usuariosEncontrados['password'])) {
                 throw new Exception("Senha incorreta");
             }
+
+            // Case fetchAll()
+            // $usuariosEncontrados => [
+            //     0 => [
+            //         'id' => 12,
+            //         'name' => 'alfredo@gmail',
+            //         'password' => '123456'
+            //     ]
+            // ]
+
+            // $token_awt = this->makeAWT($usuariosEncontrados[0]['name'], $usuariosEncontrados[0]['id']);
 
             $token_awt = $this->makeAWT(
                 $usuariosEncontrados['name'],
