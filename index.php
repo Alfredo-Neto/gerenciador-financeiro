@@ -1,10 +1,11 @@
 <?php
 //   phpinfo()
 //  exit();
-require_once 'controller/AuthController.php';
-require_once 'controller/ContasController.php';
 require_once 'lib/JsonResponse.php';
 require_once 'database/DbConnectionFactory.php';
+require_once 'controller/Controller.php';
+require_once 'controller/AuthController.php';
+require_once 'controller/ContasController.php';
 
 function instanciaClasse( $nomeDaClasse )
 {
@@ -44,6 +45,12 @@ $rotas["GET"]["/contas"] = ['ContasController', "index"];
 
 
 $request = json_decode(file_get_contents('php://input')); //raw body
+
+if ($request == null) {
+    $request = new stdClass();
+}
+
+$request->token_awt = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : null;
 
 $response = null;
 if (isset($rotas[$method][$uri])) // se método que vier do server existir e se método e o recurso que vier do server existirem

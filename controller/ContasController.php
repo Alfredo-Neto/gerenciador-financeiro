@@ -1,18 +1,18 @@
 <?php
 
-#ContasController.php
-
-class ContasController {
-    
-
+class ContasController extends Controller
+{
     public function index($request)
     {
-        //validar se o usuario tem login válido
-
         try {
-            ///usuario não autorizado
+            if(!property_exists($request, 'token_awt') || $request->token_awt == null 
+            || $request->token_awt == ''){
+                throw new Exception("Please inform token_awt field.", 1);
+            }
+            $this->validateAWT($request->token_awt);
+            
             $pdo = DbConnectionFactory::get();
-            $sql = "SELECT * FROM Contass";
+            $sql = "SELECT * FROM Contas";
             $statement = $pdo->prepare($sql);
             $statement->execute();
             $contasEncontradas = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -28,3 +28,25 @@ class ContasController {
         }
     }
 }
+
+
+
+/*
+digita nome senha
+clica no login
+sistema front dispara request pro back
+se nome e senha ta certo, vc da o ok! (retorna o token_awt novinho em folha)
+
+no front se ok, vc vai lá pro feed.
+
+get
+post
+
+-> saber que você é você
+-> saber que vc se logou certinho antes
+
+
+carregar uma imagen (manda o token)
+fazer um post (manda token)
+consultar pra ver se tem notificação (mandatoken)
+*/

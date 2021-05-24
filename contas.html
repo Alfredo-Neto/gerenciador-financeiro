@@ -27,10 +27,14 @@
             * brasue JS alfredo hue hue hue hue o rui hue junto
             * RueJS - framework do hadouken
             * */
-        
+
+            let headers = new Headers();
+            headers.append("Authorization", window.localStorage.getItem("token_awt"));
+
             fetch('http://localhost:8000/contas', {
                 method: 'get',
-                body: null
+                body: null,
+                headers: headers
             })
             .then(async (response) => {
                 const text = await response.text();

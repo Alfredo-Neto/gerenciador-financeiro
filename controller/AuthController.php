@@ -1,60 +1,7 @@
 <?php
 
-class AuthController
+class AuthController extends Controller
 {
-
-    private $delimitador = '9416485941';
-    private $qtdTempoToken = 10;
-
-    private function makeAWT($nome,$id){
-        $data = new Datetime();
-        $data->add(new DateInterval('PT' . $this->qtdTempoToken . 'S'));
-        $dataFormatada = $data->format('Y-m-d H:i:s');
-
-        $token_awt = $this->delimitador . $nome . $this->delimitador . $id . $this->delimitador . $dataFormatada . $this->delimitador;
-        $token_awt = base64_encode($token_awt);
-        return $token_awt;
-    }
-
-    private function decodeAWT($token_awt){
-        $decoded_token = base64_decode($token_awt);
-        $arrayDados = explode($this->delimitador, $decoded_token);
-        return $arrayDados;
-    }
-
-    private function validateAWT($token_awt){
-        $arrayDados = $this->decodeAWT($token_awt);
-
-        $dataAtual = new Datetime();
-        $dataToken = new Datetime($arrayDados[3]);
-
-        $resultado = $dataToken->getTimestamp() - $dataAtual->getTimestamp();
-        if($resultado <= 0){
-            throw new Exception("Seu token não é mais valido! Favor Relogar!", 1);
-        }
-
-        return true;
-    }
-
-    public function testeToken($request)
-    {
-        try {
-
-            if(!property_exists($request, 'token_awt') || $request->token_awt == null 
-            || $request->token_awt == ''){
-                throw new Exception("Please inform token_awt field.", 1);
-            }
-    
-            $this->validateAWT($request->token_awt);
-
-            return new JsonResponse (['mensagem' => 'seu token é valido, pode fazer sua operação'], 200);
-
-        } catch (Exception $e) {
-            // Seu token não é mais valido! Favor Relogar! //vamos criar uma forma de especificar esse erro!!
-            return new JsonResponse (['mensagem' => $e->getMessage()], 500);
-        }
-    }
-
     public function login($request)
     {
         try {
