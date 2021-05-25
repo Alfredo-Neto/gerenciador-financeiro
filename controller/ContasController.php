@@ -23,13 +23,14 @@ class ContasController extends Controller
             //escrever uma entrada no log com a mensagem do erro $e->getMessage();
             return new JsonResponse (['mensagem' => 'Ocorreu um erro no banco de dados! Favor tente novamente!'], 500);
         }
+        catch (AuthorizationException $e) {
+            return new JsonResponse (['mensagem' => $e->getMessage()], 401);
+        }
         catch (Exception $e) {
             return new JsonResponse (['mensagem' => $e->getMessage()], 500);
         }
     }
 }
-
-
 
 /*
 digita nome senha

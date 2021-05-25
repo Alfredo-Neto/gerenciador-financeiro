@@ -48,6 +48,9 @@
                         renderListaContas(objetoJS.data.contas)
                     } else {
                         alert('erro! ' + objetoJS.data.mensagem)
+                        if(response.status == '401'){
+                            window.location.href = "index.html";
+                        }
                     }
 
                 } catch (error) {

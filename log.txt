@@ -42,4 +42,7 @@ LINE 1: SELECT * FROM Contass
 LINE 1: SELECT * FROM Contass
                       ^\nSQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "contass" does not exist
 LINE 1: SELECT * FROM Contass
-                      ^\n
+                      ^\nSQLSTATE[42883]: Undefined function: 7 ERROR:  operator does not exist: character varying ~~ integer
+LINE 1: SELECT * FROM Usuarios where name like 13
+                                          ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.\n
