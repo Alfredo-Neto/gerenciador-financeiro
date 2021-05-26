@@ -1,0 +1,32 @@
+
+button {
+    border: none;
+    cursor: pointer;
+}
+  
+button:hover {
+    opacity: 0.8;
+}
+
+.flexcontainer {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+.btn-green {
+    margin: 0 10px;
+    color: white;
+    background-color: rgb(0, 173, 0);
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+}
+
+.btn-link {
+    margin: 0 10px;
+    color: blue;
+    text-decoration: underline;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+}

@@ -1,77 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <link rel="stylesheet" href="common.css">
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
+    <style>
+        .form {
+            margin: 5px;
+            border-radius: 5px;
+            background-color: #efefef;
+        }
+        .form input {
+            outline: none;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 
-    <h1>CONTAS</h1>
-    
-    <div id="divListaContas">
-
+    <div class="flexcontainer">
+      <div>
+        <h1>CONTAS</h1>
+      </div>
+      <div>
+        <button class="btn btn-green" onclick="toggleFormNovaConta()">Novo</button>
+      </div>
     </div>
 
+    <div class="form hidden" id="formNovaConta">
+        <form>
+            <label for="nome">Nome: </label>
+            <input type="text" placeholder="digite o nome da sua conta" />
+            <label for="saldo">Saldo: </label>
+            <input type="text" placeholder="digite o seu saldo" />
+
+            
+            <div>
+                <!-- botao pra cancelar -> chama essa mesma toggleFormNovaConta -->
+                <button type="button" class="btn btn-link" onclick="toggleFormNovaConta()">Cancelar</button>
+
+                <!-- botao pra enviar -> chama outra funcao -> declara ela e faz um alert -->
+                <button type="button" class="btn btn-green" onclick="alertPaNois()">Criar</button>
+            </div>
+            
+        </form>
+    </div>
+
+    <div id="divListaContas"></div>
 
     <script>
 
-        const listarContas = () => {
-
-            /**
-            * botão pra inserir conta // front
-            * modal para cadastrar conta // front
-            * recarregar a lista de contas // front
-            * brasue JS alfredo hue hue hue hue o rui hue junto
-            * RueJS - framework do hadouken
-            * */
-
-            let headers = new Headers();
-            headers.append("Authorization", window.localStorage.getItem("token_awt"));
-
-            fetch('http://localhost:8000/contas', {
-                method: 'get',
-                body: null,
-                headers: headers
-            })
-            .then(async (response) => {
-                const text = await response.text();
-                try {
-                    console.log('DEBUG dados antes converter', text);
-                    objetoJS = JSON.parse(text);
-                    console.log('DEBUG objetoJS', objetoJS); // TEM QUE APARECER AS CONTAS
-
-                    if(response.ok) {
-                        // alert('DEU CERTO!');
-                        renderListaContas(objetoJS.data.contas)
-                    } else {
-                        alert('erro! ' + objetoJS.data.mensagem)
-                        if(response.status == '401'){
-                            window.location.href = "index.html";
-                        }
-                    }
-
-                } catch (error) {
-                    console.error(error);
-                }
-            }) 
-            .catch((error) => console.log(error));
-        };
-
-
-        function renderListaContas (listaContas) {
-            let divListaContas = document.getElementById('divListaContas');
-            let html = '';
-            listaContas.forEach(conta => {
-                html += `<p>${conta.id}|${conta.nome}|${conta.saldo}</p>`;
-            });
-            divListaContas.innerHTML = html;
+        const toggleFormNovaConta = () => {
+            let element = document.getElementById('formNovaConta');
+            
+            if (element.classList.contains('hidden'))
+                element.classList.remove("hidden");
+            else
+                element.classList.add("hidden");
         }
 
-        listarContas();
 
+        const alertPaNois = () => {
+            alert("Qualquer coisa cara");
+        }
+
+
+      const listarContas = () => {
+        /**
+         * botão pra inserir conta // front
+         * modal para cadastrar conta // front
+         * recarregar a lista de contas // front
+         * brasue JS alfredo hue hue hue hue o rui hue junto
+         * RueJS - framework do hadouken
+         * */
+
+        let headers = new Headers();
+        headers.append(
+          "Authorization",
+          window.localStorage.getItem("token_awt")
+        );
+
+        fetch("http://localhost:8000/contas", {
+          method: "get",
+          body: null,
+          headers: headers,
+        })
+          .then(async (response) => {
+            const text = await response.text();
+            try {
+              console.log("DEBUG dados antes converter", text);
+              objetoJS = JSON.parse(text);
+              console.log("DEBUG objetoJS", objetoJS);
+
+              if (response.ok) {
+                // alert('DEU CERTO!');
+                renderListaContas(objetoJS.data.contas);
+              } else {
+                alert("erro! " + objetoJS.data.mensagem);
+                if (response.status == "401") {
+                  window.location.href = "index.html";
+                }
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          })
+          .catch((error) => console.log(error));
+      };
+
+      function renderListaContas(listaContas) {
+        let divListaContas = document.getElementById("divListaContas");
+        let html = "";
+        listaContas.forEach((conta) => {
+          html += `<p>${conta.id}|${conta.nome}|${conta.saldo}</p>`;
+        });
+        divListaContas.innerHTML = html;
+      }
+
+      listarContas();
     </script>
-</body>
+  </body>
 </html>
