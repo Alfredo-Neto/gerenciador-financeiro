@@ -43,6 +43,6 @@ class Controller
             throw new AuthorizationException("Usuário inválido! Favor Relogar!", 1);
         }
 
-        return true;
+        return $arrayDados;
     }
 }

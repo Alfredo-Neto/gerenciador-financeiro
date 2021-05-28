@@ -29,6 +29,7 @@ $rotas["POST"]["/login"] = ['AuthController', "login"];
 $rotas["POST"]["/register"] = ['AuthController', "register"];
 $rotas["POST"]["/testeToken"] = ['AuthController', "testeToken"];
 $rotas["GET"]["/contas"] = ['ContasController', "index"];
+$rotas["POST"]["/contas"] = ['ContasController', "create"];
 
 
 // $rotas = {

@@ -54,4 +54,5 @@ LINE 1: SELECT * FROM Usuarios where id like '12' and name like 'alf...
 HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.\nSQLSTATE[42883]: Undefined function: 7 ERROR:  operator does not exist: integer ~~ unknown
 LINE 1: SELECT * FROM Usuarios where id like '12' and name like 'alf...
                                         ^
-HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.\n
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.\nSQLSTATE[08P01]: <<Unknown error>>: 7 ERROR:  bind message supplies 0 parameters, but prepared statement "pdo_stmt_00000001" requires 2\nSQLSTATE[23502]: Not null violation: 7 ERROR:  null value in column "usuario_id" violates not-null constraint
+DETAIL:  Failing row contains (3, Itau, 5000.00, null).\n

@@ -32,12 +32,12 @@
       </div>
     </div>
 
-    <div class="form hidden" id="formNovaConta">
-        <form>
+    <div class="form hidden" id="divFormNovaConta">
+        <form id="formNovaConta">
             <label for="nome">Nome: </label>
-            <input type="text" placeholder="digite o nome da sua conta" />
+            <input type="text" placeholder="digite o nome da sua conta" name="nome"/>
             <label for="saldo">Saldo: </label>
-            <input type="text" placeholder="digite o seu saldo" />
+            <input type="text" placeholder="digite o seu saldo"  name="saldo"/>
 
             
             <div>
@@ -45,7 +45,7 @@
                 <button type="button" class="btn btn-link" onclick="toggleFormNovaConta()">Cancelar</button>
 
                 <!-- botao pra enviar -> chama outra funcao -> declara ela e faz um alert -->
-                <button type="button" class="btn btn-green" onclick="alertPaNois()">Criar</button>
+                <button type="button" class="btn btn-green" onclick="criaNovaConta()">Criar</button>
             </div>
             
         </form>
@@ -56,7 +56,7 @@
     <script>
 
         const toggleFormNovaConta = () => {
-            let element = document.getElementById('formNovaConta');
+            let element = document.getElementById('divFormNovaConta');
             
             if (element.classList.contains('hidden'))
                 element.classList.remove("hidden");
@@ -65,8 +65,46 @@
         }
 
 
-        const alertPaNois = () => {
-            alert("Qualquer coisa cara");
+        const criaNovaConta = () => {
+
+            let objetoJS = null;
+            const form = document.getElementById('formNovaConta');
+
+            const formData = new FormData(form);
+            arrDados = {};
+            for (const pair of formData) {
+                arrDados[pair[0]] = pair[1];
+            }
+            const meuJson = JSON.stringify(arrDados); //json é string
+
+            let headers = new Headers();
+            headers.append("Authorization", window.localStorage.getItem("token_awt"));
+
+            fetch("http://localhost:8000/contas", {
+                method: "post",
+                body: meuJson,
+                headers: headers,
+            })
+            .then(async (response) => {
+                const text = await response.text();
+                try {
+                    console.log("DEBUG dados antes converter", text);
+                    objetoJS = JSON.parse(text);
+                    console.log("DEBUG objetoJS", objetoJS);
+
+                    if (response.ok) {
+                       alert('DEU CERTO!');
+                    } else {
+                        alert("erro! " + objetoJS.data.mensagem);
+                        if (response.status == "401") {
+                            window.location.href = "index.html";
+                        }
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            })
+            .catch((error) => console.log(error));
         }
 
 
