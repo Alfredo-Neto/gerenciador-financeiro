@@ -22,7 +22,6 @@ header("Access-Control-Allow-Headers: *");
 
 $method = $_SERVER["REQUEST_METHOD"];
 $uri = $_SERVER["REQUEST_URI"];
-$count = 1;
 
 $rotas = [];
 $rotas["POST"]["/login"] = ['AuthController', "login"];

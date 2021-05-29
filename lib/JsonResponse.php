@@ -16,7 +16,7 @@ class JsonResponse //implements Response
         http_response_code($this->code); //https://www.php.net/manual/pt_BR/function.http-response-code.php
         return json_encode([
             'code' => $this->code, // FINS DE DEBUG
-            'codeString' => $this->processCode(),  // FINS DE DEBUG
+            'codeString' => $this->processCode(), // FINS DE DEBUG
             'data' => $this->data
         ]);
     }
