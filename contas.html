@@ -48,6 +48,9 @@
                 <button type="button" class="btn btn-green" onclick="criaNovaConta()">Criar</button>
             </div>
             
+            <div>
+                <button type="button" class="btn btn-green" onclick="listarMovimentos()">Movimentos</button>
+            </div>
         </form>
     </div>
 
@@ -155,6 +158,43 @@
             .catch((error) => console.log(error));
         };
 
+
+        const listarMovimentos = () => {
+
+            let headers = new Headers();
+            headers.append(
+            "Authorization",
+            window.localStorage.getItem("token_awt")
+            );
+
+            fetch("http://localhost:8000/movimentos", {
+                method: "get",
+                body: null,
+                headers: headers,
+            })
+            .then(async (response) => {
+                const text = await response.text();
+                try {
+                    console.log("DEBUG dados antes converter", text);
+                    objetoJS = JSON.parse(text);
+                    console.log("DEBUG objetoJS", objetoJS);
+
+                    if (response.ok) {
+                        alert('DEU CERTO!');
+                        console.log("Movimentos retornados: ", objetoJS.data.movimentos);
+                    } else {
+                        alert("erro! " + objetoJS.data.mensagem);
+                        if (response.status == "401") {
+                        window.location.href = "index.html";
+                        }
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            })
+            .catch((error) => console.log(error));
+        };
+
         function renderListaContas(listaContas) {
             let divListaContas = document.getElementById("divListaContas");
             let html = "";
@@ -164,7 +204,7 @@
             divListaContas.innerHTML = html;
         }
 
-        listarContas();
+        listarMovimentos();
         </script>
     </body>
 </html>

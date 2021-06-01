@@ -7,6 +7,7 @@ require_once 'database/DbConnectionFactory.php';
 require_once 'controller/Controller.php';
 require_once 'controller/AuthController.php';
 require_once 'controller/ContasController.php';
+require_once "controller/MovimentosController.php";
 
 function instanciaClasse( $nomeDaClasse )
 {
@@ -29,6 +30,7 @@ $rotas["POST"]["/register"] = ['AuthController', "register"];
 $rotas["POST"]["/testeToken"] = ['AuthController', "testeToken"];
 $rotas["GET"]["/contas"] = ['ContasController', "index"];
 $rotas["POST"]["/contas"] = ['ContasController', "create"];
+$rotas["GET"]["/movimentos"] = ['MovimentosController', "index"];
 
 
 // $rotas = {

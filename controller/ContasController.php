@@ -4,6 +4,7 @@ class ContasController extends Controller
 {
     public function index($request)
     {
+
         try {
             if(!property_exists($request, 'token_awt') || $request->token_awt == null 
             || $request->token_awt == ''){
