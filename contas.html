@@ -115,7 +115,7 @@
          * 1- faz um index de contas (busca todas as contas do usuario)
          * 2- chama a função do render passando as contas que pegou do backend.
          */
-        const listarContas = () => {
+        function listarContas () {
             /**
              * botão pra inserir conta // front
              * modal para cadastrar conta // front
@@ -126,8 +126,8 @@
 
             let headers = new Headers();
             headers.append(
-            "Authorization",
-            window.localStorage.getItem("token_awt")
+                "Authorization",
+                window.localStorage.getItem("token_awt")
             );
 
             fetch("http://localhost:8000/contas", {
@@ -138,13 +138,23 @@
             .then(async (response) => {
                 const text = await response.text();
                 try {
-                    console.log("DEBUG dados antes converter", text);
                     objetoJS = JSON.parse(text);
                     console.log("DEBUG objetoJS", objetoJS);
 
                     if (response.ok) {
-                        // alert('DEU CERTO!');
-                        renderListaContas(objetoJS.data.contas);
+
+                        let contas = objetoJS.data.contas;
+
+                        console.log(contas);
+                        for (let i = 0; i < contas.length; i++) {
+                            const listaMovimentos = await listarMovimentos();
+                            console.log(contas);
+                            contas[i].movimentos = listaMovimentos;
+                            console.log('este virá antes');
+                        }
+                        console.log('este virá depois');
+                        console.log('tem q tem movimento dentro de cada conta', contas);
+                        renderListaContas(contas);
                     } else {
                         alert("erro! " + objetoJS.data.mensagem);
                         if (response.status == "401") {
@@ -152,6 +162,8 @@
                         }
                     }
                 } catch (error) {
+                    console.log("pau na conversao... dados:", text);
+                    alert("erro na conversao! veja console log");
                     console.error(error);
                 }
             })
@@ -159,15 +171,15 @@
         };
 
 
-        const listarMovimentos = () => {
+        async function listarMovimentos () {
 
             let headers = new Headers();
             headers.append(
-            "Authorization",
-            window.localStorage.getItem("token_awt")
+                "Authorization",
+                window.localStorage.getItem("token_awt")
             );
 
-            fetch("http://localhost:8000/movimentos", {
+            let listaMovimentos = await fetch("http://localhost:8000/movimentos", {
                 method: "get",
                 body: null,
                 headers: headers,
@@ -175,36 +187,41 @@
             .then(async (response) => {
                 const text = await response.text();
                 try {
-                    console.log("DEBUG dados antes converter", text);
                     objetoJS = JSON.parse(text);
-                    console.log("DEBUG objetoJS", objetoJS);
 
                     if (response.ok) {
-                        alert('DEU CERTO!');
-                        console.log("Movimentos retornados: ", objetoJS.data.movimentos);
-                    } else {
-                        alert("erro! " + objetoJS.data.mensagem);
-                        if (response.status == "401") {
-                        window.location.href = "index.html";
-                        }
+                        return objetoJS.data.movimentos;
                     }
+
+                    alert("erro! " + objetoJS.data.mensagem);
+                    if (response.status == "401") {
+                        window.location.href = "index.html";
+                    }
+                    return {};
+
                 } catch (error) {
+                    console.log("pau na conversao... dados:", text);
+                    alert("erro na conversao! veja console log");
                     console.error(error);
                 }
             })
             .catch((error) => console.log(error));
+            return listaMovimentos;
         };
 
         function renderListaContas(listaContas) {
             let divListaContas = document.getElementById("divListaContas");
             let html = "";
             listaContas.forEach((conta) => {
-                html += `<p>${conta.id}|${conta.nome}|${conta.saldo}</p>`;
+                html += `<h3>${conta.id}|${conta.nome}|${conta.saldo}</h3>`;
+                conta.movimentos.forEach(movimento => {
+                    html += `<p>${conta.movimentos[0].descricao}|${movimento.tipo}|${movimento.valor}|${movimento.usuario_id}|${movimento.conta_id}</p>`;
+                });
             });
             divListaContas.innerHTML = html;
         }
 
-        listarMovimentos();
+        listarContas();
         </script>
     </body>
 </html>
