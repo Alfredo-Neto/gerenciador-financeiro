@@ -145,15 +145,10 @@
 
                         let contas = objetoJS.data.contas;
 
-                        console.log(contas);
                         for (let i = 0; i < contas.length; i++) {
-                            const listaMovimentos = await listarMovimentos();
-                            console.log(contas);
+                            const listaMovimentos = await listarMovimentos(contas[i].id); //fazer com que seja especifico para uma conta
                             contas[i].movimentos = listaMovimentos;
-                            console.log('este virá antes');
                         }
-                        console.log('este virá depois');
-                        console.log('tem q tem movimento dentro de cada conta', contas);
                         renderListaContas(contas);
                     } else {
                         alert("erro! " + objetoJS.data.mensagem);
@@ -171,15 +166,17 @@
         };
 
 
-        async function listarMovimentos () {
-
+        async function listarMovimentos (contaId) {
+            console.log("pendindo conta: ",contaId);
             let headers = new Headers();
             headers.append(
                 "Authorization",
                 window.localStorage.getItem("token_awt")
             );
 
-            let listaMovimentos = await fetch("http://localhost:8000/movimentos", {
+            let listaMovimentos = {};
+
+            listaMovimentos = await fetch(`http://localhost:8000/movimentos?contaId=${contaId}`, {
                 method: "get",
                 body: null,
                 headers: headers,
@@ -197,7 +194,6 @@
                     if (response.status == "401") {
                         window.location.href = "index.html";
                     }
-                    return {};
 
                 } catch (error) {
                     console.log("pau na conversao... dados:", text);
@@ -206,6 +202,7 @@
                 }
             })
             .catch((error) => console.log(error));
+
             return listaMovimentos;
         };
 
@@ -214,9 +211,11 @@
             let html = "";
             listaContas.forEach((conta) => {
                 html += `<h3>${conta.id}|${conta.nome}|${conta.saldo}</h3>`;
+
                 conta.movimentos.forEach(movimento => {
                     html += `<p>${conta.movimentos[0].descricao}|${movimento.tipo}|${movimento.valor}|${movimento.usuario_id}|${movimento.conta_id}</p>`;
                 });
+                
             });
             divListaContas.innerHTML = html;
         }

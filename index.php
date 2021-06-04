@@ -21,8 +21,13 @@ function executaMetodo($objeto, $nomeDoMetodo, $parametros = []) {
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 
+$getVars = $_GET;
+
 $method = $_SERVER["REQUEST_METHOD"];
-$uri = $_SERVER["REQUEST_URI"];
+$uriTratamento = $_SERVER["REQUEST_URI"];
+$uriTratamento = explode('?',$uriTratamento);
+$uri = $uriTratamento[0];
+
 
 $rotas = [];
 $rotas["POST"]["/login"] = ['AuthController', "login"];
@@ -52,6 +57,9 @@ $request = json_decode(file_get_contents('php://input')); //raw body
 if ($request == null)
     $request = new stdClass();
 
+foreach ($getVars as $key => $value) {
+    $request->$key = $value;
+}
 $request->token_awt = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : null;
 
 $response = null;

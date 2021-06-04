@@ -10,11 +10,17 @@ class MovimentosController extends Controller {
                 throw new AuthorizationException ("Please inform token_awt field.", 1);
             }
             $arrDados = $this->validateAWT($request->token_awt);
+            
+            if(!property_exists($request, 'contaId') || $request->contaId == null 
+            || $request->contaId == ''){
+                throw new Exception ("Please inform contaId field.", 1);
+            }
 
             $pdo = DbConnectionFactory::get();
-            $sql = "SELECT * FROM Movimentos";
+            $sql = "SELECT * FROM Movimentos where usuario_id = :usuario_id and conta_id = :conta_id";
             $statement = $pdo->prepare($sql);
-            // $statement->bindValue(':usuario_id', $arrDados[2]);
+            $statement->bindValue(':usuario_id', $arrDados[2]);
+            $statement->bindValue(':conta_id', $request->contaId);
             $statement->execute();
             $movimentosEncontrados = $statement->fetchAll(PDO::FETCH_ASSOC);
 
