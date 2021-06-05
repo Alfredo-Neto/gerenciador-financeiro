@@ -165,8 +165,7 @@
             .catch((error) => console.log(error));
         };
 
-
-        async function listarMovimentos (contaId) {
+       async function listarMovimentos (contaId) {
             console.log("pendindo conta: ",contaId);
             let headers = new Headers();
             headers.append(
@@ -189,7 +188,7 @@
                     if (response.ok) {
                         return objetoJS.data.movimentos;
                     }
-
+                    
                     alert("erro! " + objetoJS.data.mensagem);
                     if (response.status == "401") {
                         window.location.href = "index.html";
@@ -210,14 +209,29 @@
             let divListaContas = document.getElementById("divListaContas");
             let html = "";
             listaContas.forEach((conta) => {
-                html += `<h3>${conta.id}|${conta.nome}|${conta.saldo}</h3>`;
-
-                conta.movimentos.forEach(movimento => {
-                    html += `<p>${conta.movimentos[0].descricao}|${movimento.tipo}|${movimento.valor}|${movimento.usuario_id}|${movimento.conta_id}</p>`;
-                });
                 
+                let actions = getActionsContas(conta.id);
+
+                html += `<tr>
+                    <td>${conta.id}</td>
+                    <td>${conta.nome}</td>
+                    <td>${conta.saldo}</td>
+                    <td>${actions}</td>
+                </tr>`;
+
+                // conta.movimentos.forEach(movimento => {
+                //     html += `<p>${conta.movimentos[0].descricao}|${movimento.tipo}|${movimento.valor}|${movimento.usuario_id}|${movimento.conta_id}</p>`;
+                // });
             });
-            divListaContas.innerHTML = html;
+            divListaContas.innerHTML = `<table class="table">${html}</table>`;
+        }
+
+        function getActionsContas(contaId){
+            let html = `
+            <a class="btn btn-green" href="movimentos.html?contaId=${contaId}">Movimentos</a>
+            `;
+
+            return html;
         }
 
         listarContas();

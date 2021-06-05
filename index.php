@@ -51,15 +51,15 @@ $rotas["GET"]["/movimentos"] = ['MovimentosController', "index"];
 //     }
 // };
 
-
 $request = json_decode(file_get_contents('php://input')); //raw body
 
 if ($request == null)
     $request = new stdClass();
 
 foreach ($getVars as $key => $value) {
-    $request->$key = $value;
+    $request->$key = $value; // contaId = 1
 }
+
 $request->token_awt = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : null;
 
 $response = null;
@@ -68,9 +68,8 @@ if (isset($rotas[$method][$uri])) // se método que vier do server existir e se 
     $meuController = instanciaClasse($rotas[$method][$uri][0]); //instanciei controller
     $response = executaMetodo($meuController, $rotas[$method][$uri][1], [$request]); //chamei funcao (passo o array global request que contem dados GET e POST)
 } else {
-    $response = new JsonResponse(['mensagem' => 'rota não encontrada!'],404); //not found
+    $response = new JsonResponse(['mensagem' => 'rota não encontrada!'], 404); // not found
 }
-
 
 echo $response->process();
 // A função acima vai exibir o que eu enviar no input com o name == username e com name == password
