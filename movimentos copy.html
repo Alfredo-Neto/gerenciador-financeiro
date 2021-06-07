@@ -10,6 +10,17 @@
   </head>
   <body>
     <style>
+        /* .form {
+            margin: 5px;
+            border-radius: 5px;
+            background-color: #efefef;
+        }
+        .form input {
+            outline: none;
+        }
+        .hidden {
+            display: none;
+        } */
     </style>
 
     <div class="flexcontainer">
@@ -22,19 +33,18 @@
     </div>
 
     <div id="divListaMovimentos"></div>
-    <script>
-        // dado que voce recebeu o contaId pela querystring
-        // /movimentos?contaId=4 por exemplo
-        // pegue essa informação e use ela para pegar todos os movimentos da contaId passada
-        //e exiba no console log pra começar
-        async function listarMovimentos () {
-			const urlParams =  new URLSearchParams(location.search);
-			let contaId = urlParams.get('contaId');
-			const movimentos = await getMovimentosDaConta(contaId);
-			console.log('movimentos', movimentos);
-		}
 
-       async function getMovimentosDaConta (contaId) {
+    <script>
+
+        async function listarMovimentos () {
+            const urlParams = new URLSearchParams(location.search);
+            let contaId = urlParams.get('contaId');
+            const movimentos = await getMovimentosDaConta(contaId);
+            console.log('movimentos', movimentos);
+        }
+
+        async function getMovimentosDaConta (contaId) {
+            console.log("pendindo conta: ",contaId);
             let headers = new Headers();
             headers.append(
                 "Authorization",
@@ -44,25 +54,24 @@
             let listaMovimentos = {};
 
             listaMovimentos = await fetch(`http://localhost:8000/movimentos?contaId=${contaId}`, {
-                method: 'get',
+                method: "get",
                 body: null,
                 headers: headers,
             })
-            .then(async(response) => {
-                let text = await response.text();
+            .then(async (response) => {
+                const text = await response.text();
                 try {
-                    console.log("debug antes de converter: ", text);
-                    let objetoJS = JSON.parse(text);
+                    objetoJS = JSON.parse(text);
 
                     if (response.ok) {
                         return objetoJS.data.movimentos;
                     }
 
-                   alert("erro! " + objetoJS.data.mensagem);
-                   if (response.status == "401") {
-                       window.location.href = "index.html";
-                   }
-                   
+                    alert("erro! " + objetoJS.data.mensagem);
+                    if (response.status == "401") {
+                        window.location.href = "index.html";
+                    }
+
                 } catch (error) {
                     console.log("pau na conversao... dados:", text);
                     alert("erro na conversao! veja console log");
@@ -71,10 +80,10 @@
             })
             .catch((error) => console.log(error));
 
-			return listaMovimentos;
+            return listaMovimentos;
         };
 
-		listarMovimentos();
+        listarMovimentos();
     </script>
     </body>
 </html>
