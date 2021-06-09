@@ -17,20 +17,63 @@
             <h1>MOVIMENTOS</h1>
         </div>
         <div>
-            <!-- <button class="btn btn-green" onclick="toggleFormNovoMovimento()">Novo</button> -->
+            <button class="btn btn-green" onclick="toggleFormNovoMovimento()">Novo</button>
         </div>
+    </div>
+
+
+    <div class="container">
+        <form>
+            <label for="descricao">descricao do movimento</label><br>
+            <input id="descricao" type="text" name="descricao" placeholder="Insira a descricao do movimento"><br>
+            
+            <label for="valor">valor do movimento</label><br>
+            <input id="valor" type="text" name="valor" placeholder="Insira a valor do movimento"><br>
+
+            <label for="tipo">tipo do movimento</label><br>
+            <input id="tipo" type="text" name="tipo" placeholder="Insira a tipo do movimento"><br>
+            <div>
+                <button class="btn btn-green" onclick="criaMovimento()">Criar</button>
+            </div>
+        </form>
     </div>
 
     <div id="divListaMovimentos"></div>
     <script>
+
+        let idDaConta = null;
+        
+        function criaMovimento () {
+            //PEGAR OS DADOS DO FORM PQ ELE NAO TEM PERNAS
+            const descricao = form.getElementById("descricao");
+            const valor = form.getElementById("valor");
+            const tipo = form.getElementById("tipo");
+
+            const objeto = {
+                "descricao": descricao,
+                "valor": valor,
+                "tipo": tipo
+            };
+            //FORMATAR O JSON
+            const objetoJS = JSON.stringify(objeto);
+            //COLOCAR JWT NO HEADER
+            let headers = new Headers();
+            headers.append(
+                "Authorization",
+                window.localStorage.getItem("token_awt")
+            );
+            //DISPARAR O FETCH COM OS DADOS P/ CRIAR NOVO MOVIMENTO
+            fetch(`http://localhost:8000/movimentos?contaId=${idDaConta}`)
+            //EM CASO DE SUCESSO, ATUALIZAR LISTA
+        }
         // dado que voce recebeu o contaId pela querystring
         // /movimentos?contaId=4 por exemplo
         // pegue essa informação e use ela para pegar todos os movimentos da contaId passada
         //e exiba no console log pra começar
         async function listarMovimentos () {
 			const urlParams =  new URLSearchParams(location.search);
-			let contaId = urlParams.get('contaId');
-			const movimentos = await getMovimentosDaConta(contaId);
+			idDaConta = urlParams.get('contaId');
+			const movimentos = await getMovimentosDaConta(idDaConta);
 			console.log('movimentos', movimentos);
             renderListaMovimentos(movimentos);
 		}
