@@ -32,6 +32,7 @@
 			let contaId = urlParams.get('contaId');
 			const movimentos = await getMovimentosDaConta(contaId);
 			console.log('movimentos', movimentos);
+            renderListaMovimentos(movimentos);
 		}
 
        async function getMovimentosDaConta (contaId) {
@@ -73,6 +74,24 @@
 
 			return listaMovimentos;
         };
+
+        function renderListaMovimentos(listaMovimentos) {
+            let divListaMovimentos = document.getElementById("divListaMovimentos");
+            let html = "";
+            console.log(listaMovimentos);
+            listaMovimentos.forEach((movimentos) => {
+                // let actions = getActions(movimentos.id);
+
+                html += `<tr>
+                    <td>${movimentos.id}</td>
+                    <td>${movimentos.descricao}</td>
+                    <td>${movimentos.valor}</td>
+                    <td>${movimentos.tipo}</td>
+                </tr>`;
+            });
+            console.log(html);
+            divListaMovimentos.innerHTML = `<table class="table">${html}</table><h1>AMANHÃ VAMOS CRIAR O FORM PARA CRIAR NOVOS MOVIMENTOS NA CONTA</h1>`;
+        }
 
 		listarMovimentos();
     </script>
