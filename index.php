@@ -36,6 +36,7 @@ $rotas["POST"]["/testeToken"] = ['AuthController', "testeToken"];
 $rotas["GET"]["/contas"] = ['ContasController', "index"];
 $rotas["POST"]["/contas"] = ['ContasController', "create"];
 $rotas["GET"]["/movimentos"] = ['MovimentosController', "index"];
+$rotas["POST"]["/movimentos"] = ['MovimentosController', "create"];
 
 
 // $rotas = {
@@ -68,7 +69,7 @@ if (isset($rotas[$method][$uri])) // se método que vier do server existir e se 
     $meuController = instanciaClasse($rotas[$method][$uri][0]); //instanciei controller
     $response = executaMetodo($meuController, $rotas[$method][$uri][1], [$request]); //chamei funcao (passo o array global request que contem dados GET e POST)
 } else {
-    $response = new JsonResponse(['mensagem' => 'rota não encontrada!'], 404); // not found
+    $response = new JsonResponse(['mensagem' => 'rota não encontrada!'], 405); // not found
 }
 
 echo $response->process();

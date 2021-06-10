@@ -22,7 +22,7 @@
     </div>
 
 
-    <div class="container">
+    <div id="formNovoMovimento" class="form hidden">
         <form>
             <label for="descricao">descricao do movimento</label><br>
             <input id="descricao" type="text" name="descricao" placeholder="Insira a descricao do movimento"><br>
@@ -33,7 +33,7 @@
             <label for="tipo">tipo do movimento</label><br>
             <input id="tipo" type="text" name="tipo" placeholder="Insira a tipo do movimento"><br>
             <div>
-                <button class="btn btn-green" onclick="criaMovimento()">Criar</button>
+                <button type="button" class="btn btn-green" onclick="criaMovimento()">Criar</button>
             </div>
         </form>
     </div>
@@ -41,13 +41,22 @@
     <div id="divListaMovimentos"></div>
     <script>
 
+        const toggleFormNovoMovimento = () => {
+            let element = document.getElementById('formNovoMovimento');
+            
+            if (element.classList.contains('hidden'))
+                element.classList.remove('hidden');
+            else
+                element.classList.add('hidden');
+        }
+
         let idDaConta = null;
         
         function criaMovimento () {
             //PEGAR OS DADOS DO FORM PQ ELE NAO TEM PERNAS
-            const descricao = form.getElementById("descricao");
-            const valor = form.getElementById("valor");
-            const tipo = form.getElementById("tipo");
+            const descricao = document.getElementById("descricao");
+            const valor = document.getElementById("valor");
+            const tipo = document.getElementById("tipo");
 
             const objeto = {
                 "descricao": descricao,
@@ -62,19 +71,31 @@
                 "Authorization",
                 window.localStorage.getItem("token_awt")
             );
+            console.log('idDaConta antes do fetch de criacao', idDaConta);
             //DISPARAR O FETCH COM OS DADOS P/ CRIAR NOVO MOVIMENTO
-            fetch(`http://localhost:8000/movimentos?contaId=${idDaConta}`)
+            fetch(`http://localhost:8000/movimentos?contaId=${idDaConta}`, {
+                method:"post",
+                body: objetoJS,
+                headers: headers
+            })
+
             //EM CASO DE SUCESSO, ATUALIZAR LISTA
         }
+
         // dado que voce recebeu o contaId pela querystring
         // /movimentos?contaId=4 por exemplo
         // pegue essa informação e use ela para pegar todos os movimentos da contaId passada
         //e exiba no console log pra começar
-        async function listarMovimentos () {
-			const urlParams =  new URLSearchParams(location.search);
-			idDaConta = urlParams.get('contaId');
-			const movimentos = await getMovimentosDaConta(idDaConta);
-			console.log('movimentos', movimentos);
+
+        function getContaId(){
+            const urlParams =  new URLSearchParams(location.search);
+            let contaId = urlParams.get('contaId');
+            return contaId;
+        }
+
+        async function listarMovimentos (contaId) {
+            const movimentos = await getMovimentosDaConta(contaId);
+            console.log('movimentos', movimentos);
             renderListaMovimentos(movimentos);
 		}
 
@@ -136,7 +157,9 @@
             divListaMovimentos.innerHTML = `<table class="table">${html}</table><h1>AMANHÃ VAMOS CRIAR O FORM PARA CRIAR NOVOS MOVIMENTOS NA CONTA</h1>`;
         }
 
-		listarMovimentos();
+        idDaConta = getContaId();
+        console.log('idDaConta pos listar movimentos: ', idDaConta);
+        listarMovimentos(idDaConta);
     </script>
     </body>
 </html>
