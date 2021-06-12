@@ -54,17 +54,18 @@
         
         function criaMovimento () {
             //PEGAR OS DADOS DO FORM PQ ELE NAO TEM PERNAS
-            const descricao = document.getElementById("descricao");
-            const valor = document.getElementById("valor");
-            const tipo = document.getElementById("tipo");
+            const descricao = document.getElementById("descricao").value;
+            const valor = document.getElementById("valor").value;
+            const tipo = document.getElementById("tipo").value;
 
             const objeto = {
                 "descricao": descricao,
                 "valor": valor,
                 "tipo": tipo
             };
+            console.log(objeto);
             //FORMATAR O JSON
-            const objetoJS = JSON.stringify(objeto);
+            let objetoJS = JSON.stringify(objeto);
             //COLOCAR JWT NO HEADER
             let headers = new Headers();
             headers.append(
@@ -78,7 +79,27 @@
                 body: objetoJS,
                 headers: headers
             })
+            .then(async (response) => {
+                const text = await response.text();
+                try {
+                    console.log("DEBUG dados antes de converter", text);
+                    objetoJS = JSON.parse(text);
+                    console.log("DEBUG objetoJS", objetoJS);
 
+                    if (response.ok) {
+                        alert('DEU CERTO');
+                        listarMovimentos(idDaConta);
+                    } else {
+                        alert("erro! " + objetoJS.data.mensagem);
+                        if (response.status == "401") {
+                            window.location.href = "index.html";
+                        }
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            })
+            .catch((error) => console.log(error));
             //EM CASO DE SUCESSO, ATUALIZAR LISTA
         }
 
@@ -154,7 +175,7 @@
                 </tr>`;
             });
             console.log(html);
-            divListaMovimentos.innerHTML = `<table class="table">${html}</table><h1>AMANHÃ VAMOS CRIAR O FORM PARA CRIAR NOVOS MOVIMENTOS NA CONTA</h1>`;
+            divListaMovimentos.innerHTML = `<table class="table">${html}</table><h1>AMANHÃ VAMOS MUDAR O TIPO PARA UM RADIO BUTTON DE DESPESA/RECEITA</h1>`;
         }
 
         idDaConta = getContaId();

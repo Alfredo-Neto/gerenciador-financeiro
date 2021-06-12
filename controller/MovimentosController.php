@@ -75,6 +75,19 @@ class MovimentosController extends Controller {
                     throw new Exception ("Esta conta não existe");
                 }
 
+                $arrDados = $this->validateAWT($request->token_awt);
+
+                $sql = "INSERT INTO Movimentos(descricao, valor, tipo, usuario_id, conta_id) 
+                VALUES(:descricao, :valor, :tipo, :usuario_id, :conta_id)";
+                $statement = $pdo->prepare($sql);
+                $statement->bindValue(':descricao', $request->descricao);
+                $statement->bindValue(':valor', $request->valor);
+                $statement->bindValue(':tipo', $request->tipo);
+                $statement->bindValue(':usuario_id', $arrDados[2]);
+                $statement->bindValue(':conta_id', $request->contaId);
+                $statement->execute();
+
+                return new JsonResponse(['mensagem' => 'Deu bom!'], 200);
                 return new JsonResponse(['contas' => $contasEncontradas], 200);
 
             } catch (Exception $e) {
