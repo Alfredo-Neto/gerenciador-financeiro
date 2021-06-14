@@ -30,8 +30,8 @@
             <label for="valor">valor do movimento</label><br>
             <input id="valor" type="text" name="valor" placeholder="Insira a valor do movimento"><br>
 
-            <label for="tipo">tipo do movimento</label><br>
-            <input id="tipo" type="text" name="tipo" placeholder="Insira a tipo do movimento"><br>
+           <input type="radio" name="tipo" id="despesa" value="1">Despesa<br>
+           <input type="radio" name="tipo" id="receita" value="2">receita<br>
             <div>
                 <button type="button" class="btn btn-green" onclick="criaMovimento()">Criar</button>
             </div>
@@ -56,7 +56,18 @@
             //PEGAR OS DADOS DO FORM PQ ELE NAO TEM PERNAS
             const descricao = document.getElementById("descricao").value;
             const valor = document.getElementById("valor").value;
-            const tipo = document.getElementById("tipo").value;
+            const isDespesa = document.getElementById("despesa").checked;
+            const isReceita = document.getElementById("receita").checked;
+
+            let tipo = null;
+            if(isDespesa){
+                tipo = document.getElementById("despesa").value;
+            } else if (isReceita) {
+                tipo = document.getElementById("receita").value;
+            } else {
+                alert("por favor, preencha o tipo de operação");
+                return;
+            }
 
             const objeto = {
                 "descricao": descricao,
@@ -163,7 +174,16 @@
         function renderListaMovimentos(listaMovimentos) {
             let divListaMovimentos = document.getElementById("divListaMovimentos");
             let html = "";
-            console.log(listaMovimentos);
+            for (let i = 0; i < listaMovimentos.length; i++) {
+                if (listaMovimentos[i].tipo == 1) {
+                    listaMovimentos[i].tipoString = "despesa";
+                } else if (listaMovimentos[i].tipo == 2) {
+                    listaMovimentos[i].tipoString = "receita";
+                } else {
+                    listaMovimentos[i].tipoString = "erro!";
+                }
+            }
+
             listaMovimentos.forEach((movimentos) => {
                 // let actions = getActions(movimentos.id);
 
@@ -171,11 +191,11 @@
                     <td>${movimentos.id}</td>
                     <td>${movimentos.descricao}</td>
                     <td>${movimentos.valor}</td>
-                    <td>${movimentos.tipo}</td>
+                    <td>${movimentos.tipoString}</td>
                 </tr>`;
             });
             console.log(html);
-            divListaMovimentos.innerHTML = `<table class="table">${html}</table><h1>AMANHÃ VAMOS MUDAR O TIPO PARA UM RADIO BUTTON DE DESPESA/RECEITA</h1>`;
+            divListaMovimentos.innerHTML = `<table class="table">${html}</table><h1>AMANHÃ VAMOS CALCULAR O TOTAL DOS MOVIMENTOS</h1>`;
         }
 
         idDaConta = getContaId();
