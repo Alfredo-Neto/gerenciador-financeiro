@@ -33,6 +33,44 @@ class ContasController extends Controller
         }
     }
 
+    public function get ($request) {
+        try {
+            if(!property_exists($request, 'token_awt') || $request->token_awt == null
+            || $request->token_awt == ''){
+                throw new AuthorizationException("Please inform token_awt field.", 1);
+            }
+            
+            $arrDados = $this->validateAWT($request->token_awt);
+            
+            if(!property_exists($request, 'contaId') || $request->contaId == null
+            || $request->contaId == ''){
+                throw new Exception("Por favor, informe conta", 1);
+            }
+
+            $pdo = DbConnectionFactory::get();
+            $sql = "SELECT * FROM Contas where usuario_id=:usuario_id and id=:id";
+            $statement = $pdo->prepare($sql);
+            $statement->bindValue(":usuario_id", $arrDados[2]);
+            $statement->bindValue(":id", $request->contaId);
+            $statement->execute();
+            $contaEncontrada = $statement->fetch(PDO::FETCH_ASSOC);
+
+            if ($contaEncontrada == false) {
+                throw new Exception ("Esta conta não existe");
+            }
+
+            return new JsonResponse(["conta"=>$contaEncontrada], 200);
+
+        } catch (PDOException $e) {
+            file_put_contents ('log.txt', $e->getMessage() . '\n' , FILE_APPEND);
+            return new JsonResponse (['mensagem' => 'Ocorreu um erro no banco de dados! Favor tente novamente!'], 500);
+        } catch (AuthorizationException $e) {
+            return new JsonResponse (['mensagem' => $e->getMessage()], 401);
+        } catch (Exception $e) {
+            return new JsonResponse (['mensagem' => $e->getMessage()], 500);
+        }
+    }
+
     public function create($request)
     {
         try {

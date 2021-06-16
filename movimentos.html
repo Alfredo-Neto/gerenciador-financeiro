@@ -171,6 +171,46 @@
 			return listaMovimentos;
         };
 
+        async function getConta (contaId) {
+            let headers = new Headers();
+            headers.append(
+                "Authorization",
+                window.localStorage.getItem("token_awt")
+            );
+
+            let conta = {};
+
+            conta = await fetch(`http://localhost:8000/contas/get?contaId=${contaId}`, {
+                method: 'get',
+                body: null,
+                headers: headers
+            })
+            .then(async(response) => {
+                let text = await response.text();
+                try {
+                    console.log("Debug antes de converter", text);
+                    let objetoJS = JSON.parse(text);
+
+                    if (response.ok) {
+                        return objetoJS.data.conta;
+                    }
+                    
+                    if (response.status == "401") {
+                        alert("Erro" + objetoJS.data.mensagem);
+                        window.location.href = "index.html";
+                    }
+                } catch (error) {
+                    console.log("Deu pau na conversao...dados: ", text);
+                    alert("Erro na conversão, veja console log");
+                    console.log(error);
+                }
+            })
+            .catch ((error) => console.log(error));
+
+            console.log("Conta: ", conta);
+            return conta;
+        }
+
         function renderListaMovimentos(listaMovimentos) {
             let divListaMovimentos = document.getElementById("divListaMovimentos");
             let html = "";
@@ -195,12 +235,13 @@
                 </tr>`;
             });
             console.log(html);
-            divListaMovimentos.innerHTML = `<table class="table">${html}</table><h1>AMANHÃ VAMOS CALCULAR O TOTAL DOS MOVIMENTOS</h1>`;
+            divListaMovimentos.innerHTML = `<table class="table">${html}</table><h1>AMANHÃ VAMOS RENDERIZAR A CONTA NA TELA</h1>`;
         }
 
         idDaConta = getContaId();
         console.log('idDaConta pos listar movimentos: ', idDaConta);
         listarMovimentos(idDaConta);
+        getConta(idDaConta);
     </script>
     </body>
 </html>

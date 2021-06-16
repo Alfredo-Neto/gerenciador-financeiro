@@ -34,6 +34,7 @@ $rotas["POST"]["/login"] = ['AuthController', "login"];
 $rotas["POST"]["/register"] = ['AuthController', "register"];
 $rotas["POST"]["/testeToken"] = ['AuthController', "testeToken"];
 $rotas["GET"]["/contas"] = ['ContasController', "index"];
+$rotas["GET"]["/contas/get"] = ['ContasController', "get"];
 $rotas["POST"]["/contas"] = ['ContasController', "create"];
 $rotas["GET"]["/movimentos"] = ['MovimentosController', "index"];
 $rotas["POST"]["/movimentos"] = ['MovimentosController', "create"];
