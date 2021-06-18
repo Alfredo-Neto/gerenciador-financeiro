@@ -65,6 +65,7 @@ class MovimentosController extends Controller {
                 }
 
                 $pdo = DbConnectionFactory::get();
+                $pdo->beginTransaction();
                 $sql = "SELECT * FROM Contas where id = :conta_id";
                 $statement = $pdo->prepare($sql);
                 $statement->bindValue(':conta_id', $request->contaId);
@@ -74,8 +75,6 @@ class MovimentosController extends Controller {
                 if ($contasEncontradas == false) {
                     throw new Exception ("Esta conta não existe");
                 }
-
-                $arrDados = $this->validateAWT($request->token_awt);
 
                 $sql = "INSERT INTO Movimentos(descricao, valor, tipo, usuario_id, conta_id) 
                 VALUES(:descricao, :valor, :tipo, :usuario_id, :conta_id)";
@@ -87,10 +86,43 @@ class MovimentosController extends Controller {
                 $statement->bindValue(':conta_id', $request->contaId);
                 $statement->execute();
 
-                return new JsonResponse(['mensagem' => 'Deu bom!'], 200);
-                return new JsonResponse(['contas' => $contasEncontradas], 200);
+                // pegar todos os movimentos do usuario
+                $sql = "SELECT * FROM Movimentos where usuario_id=:usuario_id and conta_id=:contaId";
+                $statement = $pdo->prepare($sql);
+                $statement->bindValue(':contaId', $request->contaId);
+                $statement->bindValue(':usuario_id', $arrDados[2]);
+                $statement->execute();
+                $movimentosEncontrados = $statement->fetchAll();
+                
+                $totalDaConta = 0;
+                foreach ($movimentosEncontrados as $key => $movimento) {
+                    if ($movimento["tipo"] == 2) {
+                        $totalDaConta += $movimento["valor"];
+                    } else {
+                        $totalDaConta -= $movimento["valor"];
+                    }
+                }
 
+                $sql = "UPDATE Contas SET saldo = :saldo where usuario_id=:usuario_id and id=:contaId";
+                $statement = $pdo->prepare($sql);
+                $statement->bindValue(':saldo', $totalDaConta);
+                $statement->bindValue(':contaId', $request->contaId);
+                $statement->bindValue(':usuario_id', $arrDados[2]);
+                $statement->execute();
+                
+
+                $pdo->commit();
+                return new JsonResponse(['mensagem' => 'Deu bom!'], 200);
+
+            } catch (AuthorizationException $e) {
+                $pdo->rollBack();
+                return new JsonResponse(['mensagem' => $e->getMessage()], 401);
+            } catch (PDOException $e) {
+                file_put_contents('log.txt', $e->getMessage() . '\n', FILE_APPEND);
+                $pdo->rollBack();
+                return new JsonResponse (['mensagem' => 'Ocorreu um erro no banco de dados! Favor tente novamente!'], 500);
             } catch (Exception $e) {
+                $pdo->rollBack();
                 return new JsonResponse(['mensagem' => $e->getMessage()], 500);
             }
         }

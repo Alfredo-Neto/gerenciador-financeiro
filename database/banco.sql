@@ -45,6 +45,9 @@ CREATE TABLE Movimentos (
 INSERT INTO Movimentos (descricao, valor, tipo, usuario_id, conta_id)
 VALUES('primeiro movimento', 500, 1, 12, 4);
 
+
+TRUNCATE TABLE Movimentos;
+
 /**
 
 PROXIMO PASSO

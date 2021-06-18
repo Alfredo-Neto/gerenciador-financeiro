@@ -48,3 +48,8 @@ button:hover {
 .hidden {
     display: none;
 }
+
+.divSaldo {
+    margin-right: 5%;
+    text-align: right;
+}

@@ -38,7 +38,12 @@
         </form>
     </div>
 
+    <div id="divNomeConta"></div>
+
     <div id="divListaMovimentos"></div>
+    
+    <div class="divSaldo" id="divSaldo"></div>
+
     <script>
 
         const toggleFormNovoMovimento = () => {
@@ -100,6 +105,7 @@
                     if (response.ok) {
                         alert('DEU CERTO');
                         listarMovimentos(idDaConta);
+                        mostrarConta(idDaConta);
                     } else {
                         alert("erro! " + objetoJS.data.mensagem);
                         if (response.status == "401") {
@@ -130,6 +136,12 @@
             console.log('movimentos', movimentos);
             renderListaMovimentos(movimentos);
 		}
+
+        async function mostrarConta (contaId) {
+            const conta = await getConta(contaId);
+            console.log('conta', conta);
+            renderConta(conta);
+        }
 
        async function getMovimentosDaConta (contaId) {
             let headers = new Headers();
@@ -207,8 +219,15 @@
             })
             .catch ((error) => console.log(error));
 
-            console.log("Conta: ", conta);
             return conta;
+        }
+
+        function renderConta (conta) {
+            let divNomeConta = document.getElementById("divNomeConta");
+            let divSaldo = document.getElementById("divSaldo");
+
+            divNomeConta.innerHTML = `<h2>Conta: ${conta.nome}</h2>`;
+            divSaldo.innerHTML = `<h2>Saldo: ${conta.saldo}</h2>`;
         }
 
         function renderListaMovimentos(listaMovimentos) {
@@ -230,18 +249,18 @@
                 html += `<tr>
                     <td>${movimentos.id}</td>
                     <td>${movimentos.descricao}</td>
-                    <td>${movimentos.valor}</td>
                     <td>${movimentos.tipoString}</td>
+                    <td>${movimentos.valor}</td>
                 </tr>`;
             });
             console.log(html);
-            divListaMovimentos.innerHTML = `<table class="table">${html}</table><h1>AMANHÃ VAMOS RENDERIZAR A CONTA NA TELA</h1>`;
+            divListaMovimentos.innerHTML = `<table class="table">${html}</table>`;
         }
 
         idDaConta = getContaId();
         console.log('idDaConta pos listar movimentos: ', idDaConta);
         listarMovimentos(idDaConta);
-        getConta(idDaConta);
+        mostrarConta(idDaConta);
     </script>
     </body>
 </html>
