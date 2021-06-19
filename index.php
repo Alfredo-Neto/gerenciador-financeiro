@@ -38,6 +38,7 @@ $rotas["GET"]["/contas/get"] = ['ContasController', "get"];
 $rotas["POST"]["/contas"] = ['ContasController', "create"];
 $rotas["GET"]["/movimentos"] = ['MovimentosController', "index"];
 $rotas["POST"]["/movimentos"] = ['MovimentosController', "create"];
+$rotas["DELETE"]["/movimentos"] = ['MovimentosController', "delete"];
 
 
 // $rotas = {

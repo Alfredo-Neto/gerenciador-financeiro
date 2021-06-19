@@ -103,9 +103,9 @@
                     console.log("DEBUG objetoJS", objetoJS);
 
                     if (response.ok) {
-                        alert('DEU CERTO');
                         listarMovimentos(idDaConta);
                         mostrarConta(idDaConta);
+                        alert('DEU CERTO');
                     } else {
                         alert("erro! " + objetoJS.data.mensagem);
                         if (response.status == "401") {
@@ -183,6 +183,45 @@
 			return listaMovimentos;
         };
 
+        async function deletaMovimento(movimento) {
+            let headers = new Headers();
+            headers.append(
+                "Authorization",
+                window.localStorage.getItem("token_awt")
+            );
+
+            let movimento = {};
+            let { contaId } = movimento.conta_id;
+            let { movimentoId } = movimento.id;
+
+            movimento = await fetch(`http://localhost:8000/movimentos?contaId=${contaId}&movimentoId=${movimentoId}`, {
+                method:'delete',
+                body: null,
+                headers: headers
+            })
+            .then(async(response) => {
+                let text = await response.text();
+                try {
+                    console.log("Debug antes de converter: ", text);
+                    let objetoJS = JSON.parse(text);
+
+                    if (response.ok) {
+                        listarMovimentos(idDaConta);
+                        mostrarConta(idDaConta);
+                        alert('DEU CERTO, Movimento apagado!');
+                    } else {
+                        alert("erro! " + objetoJS.data.mensagem);
+                        if (response.status == "401") {
+                            window.location.href = "index.html";
+                        }
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            })
+            .catch((error) => console.log(error));
+        }
+
         async function getConta (contaId) {
             let headers = new Headers();
             headers.append(
@@ -251,6 +290,7 @@
                     <td>${movimentos.descricao}</td>
                     <td>${movimentos.tipoString}</td>
                     <td>${movimentos.valor}</td>
+                    <td><button onClick="deletaMovimento(${movimentos.id})">Deletar</button></td>
                 </tr>`;
             });
             console.log(html);

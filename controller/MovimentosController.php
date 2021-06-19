@@ -126,4 +126,8 @@ class MovimentosController extends Controller {
                 return new JsonResponse(['mensagem' => $e->getMessage()], 500);
             }
         }
+
+        public function delete ($request) {
+            
+        }
     }
