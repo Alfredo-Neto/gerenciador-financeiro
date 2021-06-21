@@ -190,11 +190,7 @@
                 window.localStorage.getItem("token_awt")
             );
 
-            let movimento = {};
-            let { contaId } = movimento.conta_id;
-            let { movimentoId } = movimento.id;
-
-            movimento = await fetch(`http://localhost:8000/movimentos?contaId=${contaId}&movimentoId=${movimentoId}`, {
+            movimento = await fetch(`http://localhost:8000/movimentos?contaId=${movimento.conta_id}&movimentoId=${movimento.id}`, {
                 method:'delete',
                 body: null,
                 headers: headers
@@ -206,6 +202,7 @@
                     let objetoJS = JSON.parse(text);
 
                     if (response.ok) {
+                        console.log("Testando retorno do fetch", objetoJS);
                         listarMovimentos(idDaConta);
                         mostrarConta(idDaConta);
                         alert('DEU CERTO, Movimento apagado!');

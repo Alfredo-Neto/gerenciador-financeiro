@@ -128,6 +128,39 @@ class MovimentosController extends Controller {
         }
 
         public function delete ($request) {
-            
+
+            try {
+                if(!property_exists($request, 'token_awt') || $request->token_awt == null 
+                || $request->token_awt == ''){
+                    throw new AuthorizationException ("Please inform token_awt field.", 1);
+                }
+                $arrDados = $this->validateAWT($request->token_awt);
+                
+                if(!property_exists($request, 'contaId') || $request->contaId == null 
+                || $request->contaId == ''){
+                    throw new Exception ("ContaId not informed.", 1);
+                }
+
+                if(!property_exists($request, 'movimentoId') || $request->movimentoId == null 
+                || $request->movimentoId == ''){
+                    throw new Exception ("MovimentoId not informed.", 1);
+                }
+
+                $pdo = DbConnectionFactory::get();
+                $sql = "SELECT * FROM Contas where id = :conta_id";
+                $statement = $pdo->prepare($sql);
+                $statement->bindValue(':conta_id', $request->contaId);
+                $statement->execute();
+                $movimentoEncontrado = $statement->fetch(PDO::FETCH_ASSOC);
+
+                if (!$movimentoEncontrado) {
+                    throw new Exception("Este movimento nao existe");
+                } else {
+                    return new JsonResponse(["data" => $movimentoEncontrado], 200);
+                }
+
+            } catch (\Throwable $th) {
+               
+            }
         }
     }
