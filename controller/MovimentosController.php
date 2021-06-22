@@ -159,8 +159,13 @@ class MovimentosController extends Controller {
                     return new JsonResponse(["data" => $movimentoEncontrado], 200);
                 }
 
-            } catch (\Throwable $th) {
-               
+            } catch (AuthorizationException $e) {
+                return new JsonResponse(["message" => $e->getMessage()], 401);
+            } catch (PDOException $e) {
+                file_put_contents('log.txt', $e->getMessage() . '\n', FILE_APPEND);
+                return new JsonResponse(['mensagem' => 'Ocorreu um erro no banco de dados! Favor tente novamente!'], 500);
+            } catch (Exception $e) {
+                return new JsonResponse(["message" => $e->getMessage()], 500);
             }
         }
     }
