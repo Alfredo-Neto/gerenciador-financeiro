@@ -183,14 +183,14 @@
 			return listaMovimentos;
         };
 
-        async function deletaMovimento(movimento) {
+        async function deletaMovimento(movimentoId, contaId) {
             let headers = new Headers();
             headers.append(
                 "Authorization",
                 window.localStorage.getItem("token_awt")
             );
 
-            movimento = await fetch(`http://localhost:8000/movimentos?contaId=${movimento.conta_id}&movimentoId=${movimento.id}`, {
+            movimento = await fetch(`http://localhost:8000/movimentos?contaId=${contaId}&movimentoId=${movimentoId}`, {
                 method:'delete',
                 body: null,
                 headers: headers
@@ -287,7 +287,7 @@
                     <td>${movimentos.descricao}</td>
                     <td>${movimentos.tipoString}</td>
                     <td>${movimentos.valor}</td>
-                    <td><button onClick="deletaMovimento(${movimentos.id})">Deletar</button></td>
+                    <td><button onClick="deletaMovimento(${movimentos.id}, ${movimentos.conta_id})">Deletar</button></td>
                 </tr>`;
             });
             console.log(html);

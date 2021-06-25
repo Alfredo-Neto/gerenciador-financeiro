@@ -147,17 +147,26 @@ class MovimentosController extends Controller {
                 }
 
                 $pdo = DbConnectionFactory::get();
-                $sql = "SELECT * FROM Contas where id = :conta_id";
+                $sql = "SELECT * FROM Movimentos where id = :id_movimento and conta_id = :conta_id and usuario_id = :usuario_id";
                 $statement = $pdo->prepare($sql);
                 $statement->bindValue(':conta_id', $request->contaId);
+                $statement->bindValue(':id_movimento', $request->movimentoId);
+                $statement->bindValue(':usuario_id', $arrDados[2]);
                 $statement->execute();
                 $movimentoEncontrado = $statement->fetch(PDO::FETCH_ASSOC);
 
                 if (!$movimentoEncontrado) {
-                    throw new Exception("Este movimento nao existe");
-                } else {
-                    return new JsonResponse(["data" => $movimentoEncontrado], 200);
+                    throw new Exception("Este movimento nao existe para esta conta e para este usuario");
                 }
+
+                $sql = "DELETE FROM Movimentos WHERE id = :id_movimento and conta_id = :conta_id and usuario_id = :usuario_id";
+                $statement = $pdo->prepare($sql);
+                $statement->bindValue(':id_movimento', $request->movimentoId);
+                $statement->bindValue(':conta_id', $request->contaId);
+                $statement->bindValue(':usuario_id', $arrDados[2]);
+                $statement->execute();
+
+                return new JsonResponse(["mensagem => Movimento apagado"], 200);
 
             } catch (AuthorizationException $e) {
                 return new JsonResponse(["message" => $e->getMessage()], 401);
