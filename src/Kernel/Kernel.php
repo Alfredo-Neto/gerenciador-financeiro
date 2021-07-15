@@ -63,11 +63,13 @@ class Kernel
 
     private function callController()
     {
+        file_put_contents('logRotas.html', "buscando rota: $this->method $this->uri" . '<br>', FILE_APPEND);
         $response = null;
         if (isset($this->rotas[$this->method][$this->uri])) {
             $meuController = $this->instanciaClasse($this->rotas[$this->method][$this->uri][0]);
             $response = $this->executaMetodo($meuController, $this->rotas[$this->method][$this->uri][1], [$this->request]);
         } else {
+            file_put_contents('logRotas.html', "rota não encontrada!" . '<br>', FILE_APPEND);
             $response = new JsonResponse(['mensagem' => 'rota não encontrada!'], 405);
         }
         echo $response->process();

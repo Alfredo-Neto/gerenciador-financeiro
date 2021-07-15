@@ -4,12 +4,24 @@ namespace GenFin\Controller;
 use PDO;
 use Exception;
 use PDOException;
+use GenFin\Entity\Movimento;
 use GenFin\Lib\JsonResponse;
 use GenFin\Controller\Controller;
 use GenFin\Lib\AuthorizationException;
+use GenFin\Repository\ContasRepository;
 use GenFin\Database\DbConnectionFactory;
+use GenFin\Repository\MovimentosRepository;
+
 // CRIAR UMA ROTA PARA LISTAR TODOS OS MOVIMENTOS DE UMA CONTA
 class MovimentosController extends Controller {
+
+    private MovimentosRepository $movimentosRepository;
+    private ContasRepository $contasRepository;
+
+    public function __construct() {
+        $this->movimentosRepository = new MovimentosRepository();
+        $this->contasRepository = new ContasRepository();
+    }
     
    public function index($request){
         try { 
@@ -24,13 +36,7 @@ class MovimentosController extends Controller {
                 throw new Exception ("Please inform contaId field.", 1);
             }
 
-            $pdo = DbConnectionFactory::get();
-            $sql = "SELECT * FROM Movimentos where usuario_id = :usuario_id and conta_id = :conta_id";
-            $statement = $pdo->prepare($sql);
-            $statement->bindValue(':usuario_id', $arrDados[2]);
-            $statement->bindValue(':conta_id', $request->contaId);
-            $statement->execute();
-            $movimentosEncontrados = $statement->fetchAll(PDO::FETCH_ASSOC);
+            $movimentosEncontrados = $this->movimentosRepository->findAll($arrDados[2], $request->contaId);
 
             return new JsonResponse(['movimentos' => $movimentosEncontrados], 200);
 
@@ -44,7 +50,8 @@ class MovimentosController extends Controller {
             }
         }
 
-        public function create ($request) {
+        public function create ($request) 
+        {
             try {
                 if(!property_exists($request, 'token_awt') || $request->token_awt == null 
                 || $request->token_awt == ''){
@@ -72,28 +79,22 @@ class MovimentosController extends Controller {
                     throw new Exception ("Please, fill in the field tipo", 1);
                 }
 
-                $pdo = DbConnectionFactory::get();
-                $pdo->beginTransaction();
-                $sql = "SELECT * FROM Contas where id = :conta_id";
-                $statement = $pdo->prepare($sql);
-                $statement->bindValue(':conta_id', $request->contaId);
-                $statement->execute();
-                $contasEncontradas = $statement->fetch(PDO::FETCH_ASSOC);
+                $contasEncontradas = $this->contasRepository->find($request->contaId, $arrDados[2]);
 
                 if ($contasEncontradas == false) {
                     throw new Exception ("Esta conta não existe");
                 }
 
-                $sql = "INSERT INTO Movimentos(descricao, valor, tipo, usuario_id, conta_id) 
-                VALUES(:descricao, :valor, :tipo, :usuario_id, :conta_id)";
-                $statement = $pdo->prepare($sql);
-                $statement->bindValue(':descricao', $request->descricao);
-                $statement->bindValue(':valor', $request->valor);
-                $statement->bindValue(':tipo', $request->tipo);
-                $statement->bindValue(':usuario_id', $arrDados[2]);
-                $statement->bindValue(':conta_id', $request->contaId);
-                $statement->execute();
-
+                $pdo = DbConnectionFactory::get();
+                // $pdo->beginTransaction();
+                $movimento = new Movimento();
+                $movimento->descricao = $request->descricao;
+                $movimento->valor = $request->valor;
+                $movimento->tipo = $request->tipo;
+                $movimento->contaId = $request->contaId;
+                $movimento->usuarioId = $arrDados[2];
+                $this->movimentosRepository->create($movimento);
+                
                 // pegar todos os movimentos do usuario
                 $sql = "SELECT * FROM Movimentos where usuario_id=:usuario_id and conta_id=:contaId";
                 $statement = $pdo->prepare($sql);
@@ -119,18 +120,18 @@ class MovimentosController extends Controller {
                 $statement->execute();
                 
 
-                $pdo->commit();
+                // $pdo->commit();
                 return new JsonResponse(['mensagem' => 'Deu bom!'], 200);
 
             } catch (AuthorizationException $e) {
-                $pdo->rollBack();
+                // $pdo->rollBack();
                 return new JsonResponse(['mensagem' => $e->getMessage()], 401);
             } catch (PDOException $e) {
                 file_put_contents('log.txt', $e->getMessage() . '\n', FILE_APPEND);
-                $pdo->rollBack();
+                // $pdo->rollBack();
                 return new JsonResponse (['mensagem' => 'Ocorreu um erro no banco de dados! Favor tente novamente!'], 500);
             } catch (Exception $e) {
-                $pdo->rollBack();
+                // $pdo->rollBack();
                 return new JsonResponse(['mensagem' => $e->getMessage()], 500);
             }
         }
