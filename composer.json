@@ -1,0 +1,17 @@
+{
+    "name": "alfredobraule/gerenciador-financeiro",
+    "description": "um gerenciador financeiro",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Alfredo Braule",
+            "email": "alfredoneto934@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "GenFin\\": "src/"
+        }
+    },
+    "require": {}
+}

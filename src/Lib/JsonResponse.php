@@ -1,5 +1,7 @@
 <?php
 
+namespace GenFin\Lib;
+
 class JsonResponse //implements Response
 {
     private $data;

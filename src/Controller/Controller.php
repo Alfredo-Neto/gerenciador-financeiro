@@ -1,5 +1,12 @@
 <?php
 
+namespace GenFin\Controller;
+use PDO;
+use \DateTime;
+use \DateInterval;
+use GenFin\Lib\AuthorizationException;
+use GenFin\Database\DbConnectionFactory;
+
 class Controller
 {
     private $delimitador = '9416485941';

@@ -1,84 +1,8 @@
 <?php
 //   phpinfo()
 //  exit();
-require_once 'lib/JsonResponse.php';
-require_once 'lib/AuthorizationException.php';
-require_once 'database/DbConnectionFactory.php';
-require_once 'controller/Controller.php';
-require_once 'controller/AuthController.php';
-require_once 'controller/ContasController.php';
-require_once "controller/MovimentosController.php";
+require_once 'vendor/autoload.php';
+use GenFin\Kernel\Kernel;
 
-function instanciaClasse( $nomeDaClasse )
-{
-   return new $nomeDaClasse();
-}
-
-function executaMetodo($objeto, $nomeDoMetodo, $parametros = []) {
-    return $objeto->{$nomeDoMetodo}(...$parametros); //meuController->{login}($request)
-}
-
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: *");
-
-$getVars = $_GET;
-
-$method = $_SERVER["REQUEST_METHOD"];
-$uriTratamento = $_SERVER["REQUEST_URI"];
-$uriTratamento = explode('?',$uriTratamento);
-$uri = $uriTratamento[0];
-
-
-$rotas = [];
-$rotas["POST"]["/login"] = ['AuthController', "login"];
-$rotas["POST"]["/register"] = ['AuthController', "register"];
-$rotas["POST"]["/testeToken"] = ['AuthController', "testeToken"];
-$rotas["GET"]["/contas"] = ['ContasController', "index"];
-$rotas["GET"]["/contas/get"] = ['ContasController', "get"];
-$rotas["POST"]["/contas"] = ['ContasController', "create"];
-$rotas["GET"]["/movimentos"] = ['MovimentosController', "index"];
-$rotas["POST"]["/movimentos"] = ['MovimentosController', "create"];
-$rotas["DELETE"]["/movimentos"] = ['MovimentosController', "delete"];
-
-
-// $rotas = {
-//     'POST' : {
-//         'login' : {
-//             0 : 'AuthController',
-//             1 : "login"
-//         },
-//         'register' : {
-//             0 : 'AuthController',
-//             1 : "register"
-//         }
-//     }
-// };
-
-$request = json_decode(file_get_contents('php://input')); //raw body
-
-if ($request == null)
-    $request = new stdClass();
-
-foreach ($getVars as $key => $value) {
-    $request->$key = $value; // contaId = 1
-}
-
-$request->token_awt = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : null;
-
-$response = null;
-if (isset($rotas[$method][$uri])) // se método que vier do server existir e se método e o recurso que vier do server existirem
-{
-    $meuController = instanciaClasse($rotas[$method][$uri][0]); //instanciei controller
-    $response = executaMetodo($meuController, $rotas[$method][$uri][1], [$request]); //chamei funcao (passo o array global request que contem dados GET e POST)
-} else {
-    $response = new JsonResponse(['mensagem' => 'rota não encontrada!'], 405); // not found
-}
-
-echo $response->process();
-// A função acima vai exibir o que eu enviar no input com o name == username e com name == password
-
-
-
-// Perguntas:
-// Os dados que vêm em $_SERVER["REQUEST_METHOD"] e $_SERVER["REQUEST_URI"] são do usuário ou do servidor?
-
+$kernel = new Kernel();
+$kernel->bootstrap();

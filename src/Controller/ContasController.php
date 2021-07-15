@@ -1,4 +1,12 @@
 <?php
+namespace GenFin\Controller;
+use PDO;
+use Exception;
+use PDOException;
+use GenFin\Lib\JsonResponse;
+use GenFin\Controller\Controller;
+use GenFin\Lib\AuthorizationException;
+use GenFin\Database\DbConnectionFactory;
 
 class ContasController extends Controller
 {

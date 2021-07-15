@@ -1,5 +1,9 @@
 <?php
 
+namespace GenFin\Database;
+
+use PDO;
+
  class DbConnectionFactory {
     private static $host = 'localhost';
     private static $user = 'postgres';
@@ -11,9 +15,9 @@
     public static function get() {
         
             $pdo = new PDO( 
-            'pgsql:host=' 
-            . self::$host 
-            . ';port=' . self::$port . ';dbname=' . self::$name . ';user=' 
+            'pgsql:host='
+            . self::$host
+            . ';port=' . self::$port . ';dbname=' . self::$name . ';user='
             . self::$user . ';password=' . self::$password);
 
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

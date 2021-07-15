@@ -1,5 +1,13 @@
 <?php
 
+namespace GenFin\Controller;
+use PDO;
+use Exception;
+use PDOException;
+use GenFin\Lib\JsonResponse;
+use GenFin\Controller\Controller;
+use GenFin\Lib\AuthorizationException;
+use GenFin\Database\DbConnectionFactory;
 // CRIAR UMA ROTA PARA LISTAR TODOS OS MOVIMENTOS DE UMA CONTA
 class MovimentosController extends Controller {
     
