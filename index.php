@@ -1,5 +1,5 @@
 <?php
-//   phpinfo()
+//   phpinfo();
 //  exit();
 require_once 'vendor/autoload.php';
 use GenFin\Kernel\Kernel;

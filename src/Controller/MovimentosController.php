@@ -4,6 +4,7 @@ namespace GenFin\Controller;
 use PDO;
 use Exception;
 use PDOException;
+use GenFin\Entity\Conta;
 use GenFin\Entity\Movimento;
 use GenFin\Lib\JsonResponse;
 use GenFin\Controller\Controller;
@@ -79,9 +80,9 @@ class MovimentosController extends Controller {
                     throw new Exception ("Please, fill in the field tipo", 1);
                 }
 
-                $contasEncontradas = $this->contasRepository->find($request->contaId, $arrDados[2]);
+                $conta = $this->contasRepository->find($request->contaId, $arrDados[2]);
 
-                if ($contasEncontradas == false) {
+                if ($conta == false) {
                     throw new Exception ("Esta conta não existe");
                 }
 
@@ -96,32 +97,10 @@ class MovimentosController extends Controller {
                 $this->movimentosRepository->create($movimento);
                 
                 // pegar todos os movimentos do usuario
-                $sql = "SELECT * FROM Movimentos where usuario_id=:usuario_id and conta_id=:contaId";
-                $statement = $pdo->prepare($sql);
-                $statement->bindValue(':contaId', $request->contaId);
-                $statement->bindValue(':usuario_id', $arrDados[2]);
-                $statement->execute();
-                $movimentosEncontrados = $statement->fetchAll();
                 
-                $totalDaConta = 0;
-                foreach ($movimentosEncontrados as $key => $movimento) {
-                    if ($movimento["tipo"] == 2) {
-                        $totalDaConta += $movimento["valor"];
-                    } else {
-                        $totalDaConta -= $movimento["valor"];
-                    }
-                }
-
-                $sql = "UPDATE Contas SET saldo = :saldo where usuario_id=:usuario_id and id=:contaId";
-                $statement = $pdo->prepare($sql);
-                $statement->bindValue(':saldo', $totalDaConta);
-                $statement->bindValue(':contaId', $request->contaId);
-                $statement->bindValue(':usuario_id', $arrDados[2]);
-                $statement->execute();
-                
-
+                $this->atualizarMovimentosDaConta($conta);
                 // $pdo->commit();
-                return new JsonResponse(['mensagem' => 'Deu bom!'], 200);
+                return new JsonResponse(['mensagem' => 'DEU BOM!'], 200);
 
             } catch (AuthorizationException $e) {
                 // $pdo->rollBack();
@@ -134,6 +113,22 @@ class MovimentosController extends Controller {
                 // $pdo->rollBack();
                 return new JsonResponse(['mensagem' => $e->getMessage()], 500);
             }
+        }
+
+        private function atualizarMovimentosDaConta(Conta $conta) {
+            $movimentosEncontrados = $this->movimentosRepository->findAll($conta->usuarioId, $conta->id);
+                
+            $totalDaConta = 0;
+            foreach ($movimentosEncontrados as $key => $movimento) {
+                if ($movimento["tipo"] == 2) {
+                    $totalDaConta += $movimento["valor"];
+                } else {
+                    $totalDaConta -= $movimento["valor"];
+                }
+            }
+            
+            $conta->saldo = $totalDaConta;
+            $this->contasRepository->update($conta);
         }
 
         public function delete ($request) {

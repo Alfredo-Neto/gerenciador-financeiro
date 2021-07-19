@@ -13,10 +13,25 @@ class Kernel
 
     public function bootstrap()
     {
-        $this->setCorsHeaders();
-        $this->handleRequest();
-        $this->loadRoute();
-        $this->callController();
+        try {
+            // $this->setupDefaultErrorHandling();
+            $this->setCorsHeaders();
+            $this->handleRequest();
+            $this->loadRoute();
+            $this->callController();
+        } catch (\Throwable $e) {
+            $response = new JsonResponse(['mensagem' => $e->getMessage()], 500);
+            echo $response->process();
+        }
+    }
+
+    private function setupDefaultErrorHandling() {
+        set_error_handler(function (int $errNo, string $errMsg, string $file, int $line) {});
+        set_exception_handler(function ($exception) {
+            $message =  "Error: ".$exception->getMessage();
+            $response = new JsonResponse(['message' => $message], 500);
+            echo $response->process();
+        });
     }
 
     private function setCorsHeaders()
