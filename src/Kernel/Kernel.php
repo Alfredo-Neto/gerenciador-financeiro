@@ -14,7 +14,7 @@ class Kernel
     public function bootstrap()
     {
         try {
-            // $this->setupDefaultErrorHandling();
+            $this->setupDefaultErrorHandling();
             $this->setCorsHeaders();
             $this->handleRequest();
             $this->loadRoute();
@@ -26,11 +26,22 @@ class Kernel
     }
 
     private function setupDefaultErrorHandling() {
-        set_error_handler(function (int $errNo, string $errMsg, string $file, int $line) {});
-        set_exception_handler(function ($exception) {
-            $message =  "Error: ".$exception->getMessage();
-            $response = new JsonResponse(['message' => $message], 500);
-            echo $response->process();
+        set_error_handler(function (int $errNo, string $errMsg, string $file, int $line) {
+            file_put_contents(
+                'errorLog.html',
+                "1; [$errNo] [$errMsg] [$file] [$line]",
+                FILE_APPEND
+            );
+        });
+        set_exception_handler(function (\Throwable $exception) {
+            file_put_contents(
+                'errorLog.html',
+                "2; [$exception->getMessage()] [$exception->getFile()] [$exception->getLine()]",
+                FILE_APPEND
+            );
+//            $message =  "Error: ".$exception->getMessage();
+//            $response = new JsonResponse(['message' => $message], 500);
+//            echo $response->process();
         });
     }
 

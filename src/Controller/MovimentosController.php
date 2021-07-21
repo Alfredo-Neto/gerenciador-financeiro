@@ -39,7 +39,7 @@ class MovimentosController extends Controller {
 
             $movimentosEncontrados = $this->movimentosRepository->findAll($arrDados[2], $request->contaId);
 
-            return new JsonResponse(['movimentos' => $movimentosEncontrados], 200);
+            return new JsonResponse(['movimentos' => var_export($movimentosEncontrados,true)], 200);
 
             } catch (PDOException $e) {
                     file_put_contents ('log.txt', $e->getMessage() . '\n' , FILE_APPEND);

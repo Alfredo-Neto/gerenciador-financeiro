@@ -1,19 +1,32 @@
 <?php
 namespace GenFin\Repository;
+use GenFin\Entity\Movimento;
 use PDO;
 use GenFin\Database\DbConnectionFactory;
 
 class MovimentosRepository {
+
     public function findAll($usuarioId, $contaId) {
         $pdo = DbConnectionFactory::get();
-            $sql = "SELECT * FROM Movimentos where usuario_id = :usuario_id and conta_id = :conta_id";
-            $statement = $pdo->prepare($sql);
-            $statement->bindValue(':usuario_id', $usuarioId);
-            $statement->bindValue(':conta_id', $contaId);
-            $statement->execute();
-            $movimentosEncontrados = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM Movimentos where usuario_id = :usuario_id and conta_id = :conta_id";
+        $statement = $pdo->prepare($sql);
+        $statement->bindValue(':usuario_id', $usuarioId);
+        $statement->bindValue(':conta_id', $contaId);
+        $statement->execute();
+        $movimentos = $statement->fetchAll(PDO::FETCH_CLASS, 'GenFin\Entity\Movimento');
+        return $movimentos;
+    }
 
-            return $movimentosEncontrados;
+    public function find ($usuarioId, $contaId, $movimentoId) {
+        $pdo = DbConnectionFactory::get();
+        $sql = "SELECT * FROM Movimentos where usuario_id = :usuario_id and conta_id = :conta_id and id = :id";
+        $statement = $pdo->prepare($sql);
+        $statement->bindValue(':usuario_id', $usuarioId);
+        $statement->bindValue(':conta_id', $contaId);
+        $statement->bindValue(':id', $movimentoId);
+        $statement->execute();
+        $movimento = $statement->fetch(PDO::FETCH_CLASS,'GenFin\Entity\Movimento');
+        return $movimento;
     }
 
     public function create($movimento) {
