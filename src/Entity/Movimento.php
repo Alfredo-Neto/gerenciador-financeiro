@@ -4,19 +4,20 @@ namespace GenFin\Entity;
 
 use GenFin\Entity\Model;
 
-class Movimento implements Model{
+class Movimento extends Model{
     public $id;
     public $descricao;
     public $valor;
     public $tipo;
     public $usuarioId;
     public $contaId;
+    public $ormMapping = [
+        "usuario_id" => "usuarioId",
+        "conta_id" => "contaId"
+    ];
 
-    public function __construct ()
-    {
-        $this->ORMMapping();
-    }
-
+    // criar função ORMMapping no próprio Model
+   
     public function ORMMapping()
     {
         if(isset($this->usuario_id) && $this->usuarioId == null){

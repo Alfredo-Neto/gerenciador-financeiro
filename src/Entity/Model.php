@@ -2,6 +2,10 @@
 
 namespace GenFin\Entity;
 
-interface Model {
-    public function ORMMapping();
+abstract class Model implements ModelInterface {
+    
+    public function __construct ()
+    {
+        $this->ORMMapping();
+    }
 }
