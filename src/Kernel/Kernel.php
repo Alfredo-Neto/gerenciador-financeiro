@@ -20,7 +20,10 @@ class Kernel
             $this->loadRoute();
             $this->callController();
         } catch (\Throwable $e) {
-            $response = new JsonResponse(['mensagem' => $e->getMessage()], 500);
+            $response = new JsonResponse([
+                'mensagem' => 
+                $e->getMessage() . " " . $e->getFile() . "line: " . $e->getLine()
+            ], 500);
             echo $response->process();
         }
     }

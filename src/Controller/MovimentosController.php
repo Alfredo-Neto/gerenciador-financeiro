@@ -12,16 +12,19 @@ use GenFin\Lib\AuthorizationException;
 use GenFin\Repository\ContasRepository;
 use GenFin\Database\DbConnectionFactory;
 use GenFin\Repository\MovimentosRepository;
+use GenFin\Service\ContasService;
 
 // CRIAR UMA ROTA PARA LISTAR TODOS OS MOVIMENTOS DE UMA CONTA
 class MovimentosController extends Controller {
 
     private MovimentosRepository $movimentosRepository;
     private ContasRepository $contasRepository;
+    private ContasService $contasService;
 
     public function __construct() {
         $this->movimentosRepository = new MovimentosRepository();
         $this->contasRepository = new ContasRepository();
+        $this->contasService = new ContasService();
     }
     
    public function index($request){
@@ -39,7 +42,7 @@ class MovimentosController extends Controller {
 
             $movimentosEncontrados = $this->movimentosRepository->findAll($arrDados[2], $request->contaId);
 
-            return new JsonResponse(['movimentos' => var_export($movimentosEncontrados,true)], 200);
+            return new JsonResponse(['movimentos' => $movimentosEncontrados], 200);
 
             } catch (PDOException $e) {
                     file_put_contents ('log.txt', $e->getMessage() . '\n' , FILE_APPEND);
@@ -98,7 +101,7 @@ class MovimentosController extends Controller {
                 
                 // pegar todos os movimentos do usuario
                 
-                $this->atualizarMovimentosDaConta($conta);
+                $this->contasService->atualizarMovimentosDaConta($conta);
                 // $pdo->commit();
                 return new JsonResponse(['mensagem' => 'DEU BOM!'], 200);
 
@@ -113,22 +116,6 @@ class MovimentosController extends Controller {
                 // $pdo->rollBack();
                 return new JsonResponse(['mensagem' => $e->getMessage()], 500);
             }
-        }
-
-        private function atualizarMovimentosDaConta(Conta $conta) {
-            $movimentosEncontrados = $this->movimentosRepository->findAll($conta->usuarioId, $conta->id);
-                
-            $totalDaConta = 0;
-            foreach ($movimentosEncontrados as $key => $movimento) {
-                if ($movimento["tipo"] == 2) {
-                    $totalDaConta += $movimento["valor"];
-                } else {
-                    $totalDaConta -= $movimento["valor"];
-                }
-            }
-            
-            $conta->saldo = $totalDaConta;
-            $this->contasRepository->update($conta);
         }
 
         public function delete ($request) {

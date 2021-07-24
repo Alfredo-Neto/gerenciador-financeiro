@@ -17,10 +17,10 @@ class Movimento extends Model{
     ];
 
     // criar função ORMMapping no próprio Model
-   
+
     public function ORMMapping()
     {
-        if(isset($this->usuario_id) && $this->usuarioId == null){
+        if (isset($this->usuario_id) && $this->usuarioId == null){
             $this->usuarioId = $this->usuario_id;
             unset($this->usuario_id);
         }
